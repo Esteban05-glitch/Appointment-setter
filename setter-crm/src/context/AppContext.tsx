@@ -111,7 +111,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
                     status: p.status as Prospect["status"],
                     priority: (p.priority || "medium") as Prospect["priority"],
                     value: p.value,
-                    lastContact: p.last_contact,
+                    lastContact: p.last_contact || new Date().toISOString(),
                     notesCount: p.prospect_notes ? (p.prospect_notes[0] as any).count : 0
                 })));
             }
@@ -134,7 +134,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
                 status: prospect.status,
                 priority: prospect.priority,
                 value: prospect.value,
-                last_contact: prospect.lastContact,
+                last_contact: prospect.lastContact || new Date().toISOString(),
                 user_id: user.id
             })
             .select()

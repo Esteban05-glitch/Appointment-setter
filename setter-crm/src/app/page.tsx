@@ -9,6 +9,8 @@ import { AddProspectModal } from "@/components/pipeline/AddProspectModal";
 import { Prospect } from "@/components/pipeline/types";
 import { useRouter } from "next/navigation";
 
+import { FollowUpWidget } from "@/components/dashboard/FollowUpWidget";
+
 export default function Dashboard() {
   const { prospects, totalCalls, logCall, addProspect, goals, userProfile } = useApp();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -54,7 +56,7 @@ export default function Dashboard() {
       id: Math.random().toString(36).substr(2, 9),
       ...newProspectData,
       status: "new_lead",
-      lastContact: "Just now",
+      lastContact: new Date().toISOString(),
     };
     addProspect(newProspect);
     setIsModalOpen(false);
@@ -107,30 +109,34 @@ export default function Dashboard() {
           <CommissionCalc />
         </div>
 
-        <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-6 lg:col-span-3">
-          <h3 className="text-lg font-medium text-slate-200">Quick Actions</h3>
-          <div className="mt-4 space-y-4">
-            <button
-              onMouseDown={startLogging}
-              onMouseUp={stopLogging}
-              onMouseLeave={stopLogging}
-              onTouchStart={startLogging}
-              onTouchEnd={stopLogging}
-              className="flex w-full items-center justify-between rounded-lg border border-slate-700 bg-slate-800 p-4 transition-colors hover:bg-slate-700 active:bg-slate-600 select-none"
-            >
-              <span className="font-medium text-slate-300">Log New Call</span>
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-slate-500">+1 Call</span>
-                <Phone className="h-5 w-5 text-indigo-400" />
-              </div>
-            </button>
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className="flex w-full items-center justify-between rounded-lg border border-slate-700 bg-slate-800 p-4 transition-colors hover:bg-slate-700"
-            >
-              <span className="font-medium text-slate-300">Add Prospect</span>
-              <CalendarCheck className="h-5 w-5 text-cyan-400" />
-            </button>
+        <div className="space-y-6 lg:col-span-3">
+          <FollowUpWidget />
+
+          <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-6">
+            <h3 className="text-lg font-medium text-slate-200">Quick Actions</h3>
+            <div className="mt-4 space-y-4">
+              <button
+                onMouseDown={startLogging}
+                onMouseUp={stopLogging}
+                onMouseLeave={stopLogging}
+                onTouchStart={startLogging}
+                onTouchEnd={stopLogging}
+                className="flex w-full items-center justify-between rounded-lg border border-slate-700 bg-slate-800 p-4 transition-colors hover:bg-slate-700 active:bg-slate-600 select-none"
+              >
+                <span className="font-medium text-slate-300">Log New Call</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-slate-500">+1 Call</span>
+                  <Phone className="h-5 w-5 text-indigo-400" />
+                </div>
+              </button>
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="flex w-full items-center justify-between rounded-lg border border-slate-700 bg-slate-800 p-4 transition-colors hover:bg-slate-700"
+              >
+                <span className="font-medium text-slate-300">Add Prospect</span>
+                <CalendarCheck className="h-5 w-5 text-cyan-400" />
+              </button>
+            </div>
           </div>
         </div>
       </div>
