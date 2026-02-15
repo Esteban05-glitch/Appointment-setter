@@ -7,12 +7,15 @@ import { useState } from "react";
 
 export default function SettingsPage() {
     const { prospects, goals, updateGoals, userProfile, updateUserProfile, resetData } = useApp();
-    const [localGoals, setLocalGoals] = useState(goals);
+    const [localGoals, setLocalGoals] = useState<{ [K in keyof typeof goals]: number | string }>(goals);
     const [localProfile, setLocalProfile] = useState(userProfile);
     const [isSaved, setIsSaved] = useState(false);
 
     const handleSave = () => {
-        updateGoals(localGoals);
+        updateGoals({
+            monthlyCommission: Number(localGoals.monthlyCommission || 0),
+            dailyCalls: Number(localGoals.dailyCalls || 0),
+        });
         updateUserProfile(localProfile);
         setIsSaved(true);
         setTimeout(() => setIsSaved(false), 2000);
@@ -93,7 +96,7 @@ export default function SettingsPage() {
                                 <input
                                     type="number"
                                     value={localGoals.monthlyCommission}
-                                    onChange={(e) => setLocalGoals({ ...localGoals, monthlyCommission: Number(e.target.value) })}
+                                    onChange={(e) => setLocalGoals({ ...localGoals, monthlyCommission: e.target.value })}
                                     className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-slate-200 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                                 />
                             </div>
@@ -102,7 +105,7 @@ export default function SettingsPage() {
                                 <input
                                     type="number"
                                     value={localGoals.dailyCalls}
-                                    onChange={(e) => setLocalGoals({ ...localGoals, dailyCalls: Number(e.target.value) })}
+                                    onChange={(e) => setLocalGoals({ ...localGoals, dailyCalls: e.target.value })}
                                     className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-slate-200 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                                 />
                             </div>

@@ -4,11 +4,11 @@ import { useState } from "react";
 import { DollarSign, Calculator } from "lucide-react";
 
 export function CommissionCalc() {
-    const [dealValue, setDealValue] = useState<number>(3000);
-    const [commissionRate, setCommissionRate] = useState<number>(10);
-    const [dealsCount, setDealsCount] = useState<number>(5);
+    const [dealValue, setDealValue] = useState<number | string>(3000);
+    const [commissionRate, setCommissionRate] = useState<number | string>(10);
+    const [dealsCount, setDealsCount] = useState<number | string>(5);
 
-    const totalCommission = (dealValue * (commissionRate / 100)) * dealsCount;
+    const totalCommission = (Number(dealValue || 0) * (Number(commissionRate || 0) / 100)) * Number(dealsCount || 0);
 
     return (
         <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-6">
@@ -27,7 +27,7 @@ export function CommissionCalc() {
                         <input
                             type="number"
                             value={dealValue}
-                            onChange={(e) => setDealValue(Number(e.target.value))}
+                            onChange={(e) => setDealValue(e.target.value)}
                             className="w-full rounded-lg border border-slate-700 bg-slate-800 py-2 pl-9 pr-3 text-sm text-slate-200 placeholder-slate-500 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                         />
                     </div>
@@ -39,7 +39,7 @@ export function CommissionCalc() {
                         <input
                             type="number"
                             value={commissionRate}
-                            onChange={(e) => setCommissionRate(Number(e.target.value))}
+                            onChange={(e) => setCommissionRate(e.target.value)}
                             className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-200 placeholder-slate-500 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                         />
                     </div>
@@ -48,7 +48,7 @@ export function CommissionCalc() {
                         <input
                             type="number"
                             value={dealsCount}
-                            onChange={(e) => setDealsCount(Number(e.target.value))}
+                            onChange={(e) => setDealsCount(e.target.value)}
                             className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-200 placeholder-slate-500 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                         />
                     </div>

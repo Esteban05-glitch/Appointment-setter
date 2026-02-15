@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, KanbanSquare, MessageSquareText, Settings, BarChart3 } from "lucide-react";
+import { LayoutDashboard, KanbanSquare, MessageSquareText, Settings, BarChart3, Archive } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navigation = [
@@ -10,6 +10,7 @@ const navigation = [
     { name: "Pipeline", href: "/pipeline", icon: KanbanSquare },
     { name: "Analytics", href: "/analytics", icon: BarChart3 },
     { name: "Scripts", href: "/scripts", icon: MessageSquareText },
+    { name: "Archivo", href: "/archive", icon: Archive },
     { name: "Settings", href: "/settings", icon: Settings },
 ];
 

@@ -37,12 +37,19 @@ interface AppContextType {
     signOut: () => Promise<void>;
     loading: boolean;
     user: User | null;
+    archivedProspects: Prospect[];
+    callHistory: { month: string; total: number }[];
+    fetchArchivedProspects: () => Promise<void>;
+    restoreProspect: (id: string) => Promise<void>;
+    deleteArchivedProspect: (id: string) => Promise<void>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export function AppProvider({ children }: { children: ReactNode }) {
     const [prospects, setProspects] = useState<Prospect[]>([]);
+    const [archivedProspects, setArchivedProspects] = useState<Prospect[]>([]);
+    const [callHistory, setCallHistory] = useState<{ month: string; total: number }[]>([]);
     const [totalCalls, setTotalCalls] = useState(0);
     const [goals, setGoals] = useState<UserGoals>({
         monthlyCommission: 5000,
@@ -94,9 +101,48 @@ export function AppProvider({ children }: { children: ReactNode }) {
                 if (profileData.total_calls !== undefined) {
                     setTotalCalls(profileData.total_calls);
                 }
+                if (profileData.call_history) {
+                    setCallHistory(profileData.call_history);
+                }
+
+                // Check for monthly reset
+                const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM
+                const lastResetMonth = profileData.last_reset_month;
+
+                if (lastResetMonth && lastResetMonth !== currentMonth) {
+                    // It's a new month!
+                    const archiveCalls = profileData.total_calls || 0;
+                    const history = profileData.call_history || [];
+                    const newHistory = [...history, { month: lastResetMonth, total: archiveCalls }];
+
+                    // 1. Archive prospects in Database (Closed/Won only)
+                    await supabase
+                        .from('prospects')
+                        .update({ is_archived: true })
+                        .eq('user_id', user.id)
+                        .eq('status', 'closed');
+
+                    // 2. Reset calls and update history/last_reset_month
+                    await supabase
+                        .from('profiles')
+                        .update({
+                            total_calls: 0,
+                            last_reset_month: currentMonth,
+                            call_history: newHistory
+                        })
+                        .eq('id', user.id);
+
+                    setTotalCalls(0);
+                } else if (!lastResetMonth) {
+                    // First time initialization for monthly tracking
+                    await supabase
+                        .from('profiles')
+                        .update({ last_reset_month: currentMonth })
+                        .eq('id', user.id);
+                }
             }
 
-            // Fetch prospects from Supabase with notes count
+            // Fetch prospects from Supabase with notes count (filtering out archived)
             const { data: prospectsData } = await supabase
                 .from('prospects')
                 .select(`
@@ -104,6 +150,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
                     prospect_notes:prospect_notes(count)
                 `)
                 .eq('user_id', user.id)
+                .eq('is_archived', false) // Only active prospects
                 .order('created_at', { ascending: false });
 
             if (prospectsData) {
@@ -379,6 +426,71 @@ export function AppProvider({ children }: { children: ReactNode }) {
         window.location.href = "/login";
     };
 
+    const fetchArchivedProspects = async () => {
+        if (!user) return;
+        const { data } = await supabase
+            .from('prospects')
+            .select(`
+                *,
+                prospect_notes:prospect_notes(count)
+            `)
+            .eq('user_id', user.id)
+            .eq('is_archived', true)
+            .order('created_at', { ascending: false });
+
+        if (data) {
+            setArchivedProspects(data.map(p => ({
+                ...p,
+                notesCount: p.prospect_notes?.[0]?.count || 0
+            })));
+        }
+    };
+
+    const restoreProspect = async (id: string) => {
+        if (!user) return;
+        const { error } = await supabase
+            .from('prospects')
+            .update({ is_archived: false })
+            .eq('id', id)
+            .eq('user_id', user.id);
+
+        if (!error) {
+            await fetchArchivedProspects();
+            // Refresh active prospects
+            const { data: prospectsData } = await supabase
+                .from('prospects')
+                .select(`
+                    *,
+                    prospect_notes:prospect_notes(count)
+                `)
+                .eq('user_id', user.id)
+                .eq('is_archived', false)
+                .order('created_at', { ascending: false });
+
+            if (prospectsData) {
+                setProspects(prospectsData.map(p => ({
+                    ...p,
+                    notesCount: p.prospect_notes?.[0]?.count || 0
+                })));
+            }
+        }
+    };
+
+    const deleteArchivedProspect = async (id: string) => {
+        if (!user) return;
+        if (!confirm("¿Estás seguro de que quieres eliminar permanentemente este prospecto?")) return;
+
+        const { error } = await supabase
+            .from('prospects')
+            .delete()
+            .eq('id', id)
+            .eq('user_id', user.id);
+
+        if (!error) {
+            await fetchArchivedProspects();
+        }
+    };
+
     return (
         <AppContext.Provider value={{
             prospects, setProspects, addProspect, updateProspectStatus, updateProspectPriority,
@@ -390,7 +502,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
             resetData,
             signOut,
             loading,
-            user
+            user,
+            archivedProspects,
+            callHistory,
+            fetchArchivedProspects,
+            restoreProspect,
+            deleteArchivedProspect
         }}>
             {children}
         </AppContext.Provider>
