@@ -116,7 +116,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
                     qualBudget: p.qual_budget,
                     qualAuthority: p.qual_authority,
                     qualNeed: p.qual_need,
-                    qualTiming: p.qual_timing
+                    qualTiming: p.qual_timing,
+                    commissionRate: p.commission_rate
                 })));
             }
 
@@ -143,6 +144,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
                 qual_authority: prospect.qualAuthority || false,
                 qual_need: prospect.qualNeed || false,
                 qual_timing: prospect.qualTiming || false,
+                commission_rate: prospect.commissionRate || 10,
                 user_id: user.id
             })
             .select()
@@ -211,6 +213,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         if (updates.qualAuthority !== undefined) dbUpdates.qual_authority = updates.qualAuthority;
         if (updates.qualNeed !== undefined) dbUpdates.qual_need = updates.qualNeed;
         if (updates.qualTiming !== undefined) dbUpdates.qual_timing = updates.qualTiming;
+        if (updates.commissionRate !== undefined) dbUpdates.commission_rate = updates.commissionRate;
 
         const { error } = await supabase
             .from('prospects')

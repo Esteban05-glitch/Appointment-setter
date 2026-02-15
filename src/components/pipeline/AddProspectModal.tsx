@@ -16,6 +16,7 @@ export function AddProspectModal({ isOpen, onClose, onAdd }: AddProspectModalPro
     const [handle, setHandle] = useState("");
     const [platform, setPlatform] = useState<Prospect["platform"]>("instagram");
     const [value, setValue] = useState("");
+    const [commissionRate, setCommissionRate] = useState("10");
     const [priority, setPriority] = useState<Prospect["priority"]>("medium");
     const [qualBudget, setQualBudget] = useState(false);
     const [qualAuthority, setQualAuthority] = useState(false);
@@ -32,6 +33,7 @@ export function AddProspectModal({ isOpen, onClose, onAdd }: AddProspectModalPro
             platform,
             priority,
             value: value ? Number(value) : undefined,
+            commissionRate: commissionRate ? Number(commissionRate) : 10,
             qualBudget,
             qualAuthority,
             qualNeed,
@@ -42,6 +44,7 @@ export function AddProspectModal({ isOpen, onClose, onAdd }: AddProspectModalPro
         setHandle("");
         setPlatform("instagram");
         setValue("");
+        setCommissionRate("10");
         setPriority("medium");
         setQualBudget(false);
         setQualAuthority(false);
@@ -143,6 +146,19 @@ export function AddProspectModal({ isOpen, onClose, onAdd }: AddProspectModalPro
                                 className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-slate-200 placeholder-slate-500 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                                 placeholder="0.00"
                             />
+                        </div>
+                        <div>
+                            <label className="mb-1.5 block text-sm font-medium text-slate-400">Comisión (%)</label>
+                            <div className="relative">
+                                <input
+                                    type="number"
+                                    value={commissionRate}
+                                    onChange={(e) => setCommissionRate(e.target.value)}
+                                    className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 pr-8 text-slate-200 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                                    placeholder="10"
+                                />
+                                <span className="absolute right-3 top-2 text-slate-500">%</span>
+                            </div>
                         </div>
                     </div>
 

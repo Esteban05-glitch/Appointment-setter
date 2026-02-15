@@ -90,7 +90,7 @@ export function PlatformPerformanceChart({ prospects }: { prospects: Prospect[] 
 
 export function GoalProgressChart({ prospects, goals }: PerformanceChartsProps) {
     const closedDeals = prospects.filter(p => p.status === "closed");
-    const currentCommission = closedDeals.reduce((acc, p) => acc + (p.value || 0), 0) * 0.10;
+    const currentCommission = closedDeals.reduce((acc, p) => acc + ((p.value || 0) * (p.commissionRate || 10) / 100), 0);
 
     const data = [
         { name: "Progress", current: currentCommission, goal: goals.monthlyCommission }

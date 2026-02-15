@@ -20,6 +20,7 @@ interface ProspectCardProps {
 export function ProspectCard({ prospect, onEdit, onOpenNotes }: ProspectCardProps) {
     const { updateProspectPriority, deleteProspect } = useApp();
     const [showMenu, setShowMenu] = useState(false);
+    const estCommission = prospect.value ? (prospect.value * (prospect.commissionRate || 10) / 100) : 0;
     const menuRef = useRef<HTMLDivElement>(null);
     const Icon = PlatformIcon[prospect.platform];
 
@@ -217,18 +218,26 @@ export function ProspectCard({ prospect, onEdit, onOpenNotes }: ProspectCardProp
                         </div>
                     </div>
 
-                    <div className="mt-3.5 flex items-center justify-between border-t border-slate-800/60 pt-2.5">
-                        <div className="flex items-center gap-1.5 min-w-0">
+                    <div className="mt-3.5 flex items-center justify-between gap-2 border-t border-slate-800/60 pt-2.5">
+                        <div className="flex min-w-0 items-center gap-1.5">
                             <Clock className="h-2.5 w-2.5 shrink-0 text-slate-600" />
                             <span className="truncate text-[10px] text-slate-500">
                                 {formatLastContact(prospect.lastContact)}
                             </span>
                         </div>
-                        {typeof prospect.value === 'number' && (
-                            <span className="shrink-0 text-[11px] font-bold text-emerald-400">
-                                ${prospect.value.toLocaleString()}
-                            </span>
-                        )}
+                        <div className="flex shrink-0 flex-col items-end gap-0.5">
+                            {typeof prospect.value === 'number' && (
+                                <span className="shrink-0 text-[10px] font-medium text-slate-500 line-through decoration-slate-700">
+                                    ${prospect.value.toLocaleString()}
+                                </span>
+                            )}
+                            <div className="flex items-center gap-1.5 leading-none">
+                                <span className="text-[9px] font-bold text-slate-600">Cmsn ({prospect.commissionRate || 10}%)</span>
+                                <span className="text-xs font-black text-indigo-400">
+                                    ${estCommission.toLocaleString()}
+                                </span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

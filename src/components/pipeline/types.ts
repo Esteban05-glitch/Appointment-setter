@@ -23,6 +23,7 @@ export interface Prospect {
     qualAuthority?: boolean;
     qualNeed?: boolean;
     qualTiming?: boolean;
+    commissionRate?: number;
 }
 
 export type ColumnType = {
