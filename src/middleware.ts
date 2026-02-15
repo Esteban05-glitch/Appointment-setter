@@ -1,7 +1,7 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
-export async function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
     let response = NextResponse.next({
         request: {
             headers: request.headers,
@@ -54,21 +54,7 @@ export async function proxy(request: NextRequest) {
         }
     )
 
-    // This will refresh session if expired - necessary for Server Components
-    const { data: { user } } = await supabase.auth.getUser()
-
-    // Protect routes: Redirect to /login if there is no user and trying to access sensitive pages
-    if (!user &&
-        !request.nextUrl.pathname.startsWith('/login') &&
-        !request.nextUrl.pathname.startsWith('/auth')) {
-        return NextResponse.redirect(new URL('/login', request.url))
-    }
-
-    // Redirect to / if user is logged in and trying to access /login
-    if (user && request.nextUrl.pathname.startsWith('/login')) {
-        return NextResponse.redirect(new URL('/', request.url))
-    }
-
+    // Temporarily disabled for 404 debugging
     return response
 }
 
