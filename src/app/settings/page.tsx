@@ -1,11 +1,12 @@
 "use client";
 
 import { useApp } from "@/context/AppContext";
-import { Save, RefreshCw, Trash2, Target, User, BarChart } from "lucide-react";
+import { Save, RefreshCw, Trash2, Target, User, BarChart, Download } from "lucide-react";
+import { downloadProspectsCSV } from "@/lib/exportUtils";
 import { useState } from "react";
 
 export default function SettingsPage() {
-    const { goals, updateGoals, userProfile, updateUserProfile, resetData } = useApp();
+    const { prospects, goals, updateGoals, userProfile, updateUserProfile, resetData } = useApp();
     const [localGoals, setLocalGoals] = useState(goals);
     const [localProfile, setLocalProfile] = useState(userProfile);
     const [isSaved, setIsSaved] = useState(false);
@@ -121,6 +122,25 @@ export default function SettingsPage() {
                                         Save Changes
                                     </>
                                 )}
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Data Management Section */}
+                    <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-6">
+                        <h3 className="flex items-center gap-2 text-lg font-medium text-slate-200">
+                            <Download className="h-5 w-5 text-indigo-400" />
+                            Data Management
+                        </h3>
+                        <p className="mt-1 text-sm text-slate-500">Back up your data for use in Excel or Google Sheets.</p>
+
+                        <div className="mt-6">
+                            <button
+                                onClick={() => downloadProspectsCSV(prospects)}
+                                className="flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-800 px-4 py-2 text-sm font-medium text-slate-300 transition-colors hover:bg-slate-700 hover:text-white"
+                            >
+                                <Download className="h-4 w-4" />
+                                Exportar a CSV (Excel/Sheets)
                             </button>
                         </div>
                     </div>
