@@ -5,7 +5,7 @@ import { ConversionRateChart, PlatformPerformanceChart, GoalProgressChart } from
 import { BarChart3, TrendingUp, Target, Share2 } from "lucide-react";
 
 export default function AnalyticsPage() {
-    const { prospects, goals } = useApp();
+    const { prospects, goals, totalCalls } = useApp();
 
     const totalLeads = prospects.length;
     const bookedLeads = prospects.filter(p => p.status === "booked").length;
@@ -18,7 +18,7 @@ export default function AnalyticsPage() {
                 <p className="mt-2 text-slate-400">Deep dive into your conversion and platform data.</p>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-3">
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
                 <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-sm">
                     <div className="flex items-center gap-3">
                         <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-500/10 text-indigo-400">
@@ -36,8 +36,19 @@ export default function AnalyticsPage() {
                             <Target className="h-5 w-5" />
                         </div>
                         <div>
-                            <p className="text-sm font-medium text-slate-500">Monthly Goal</p>
+                            <p className="text-sm font-medium text-slate-500">Monthly Revenue Goal</p>
                             <p className="text-2xl font-bold text-white">${goals.monthlyCommission.toLocaleString()}</p>
+                        </div>
+                    </div>
+                </div>
+                <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-sm">
+                    <div className="flex items-center gap-3">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-500/10 text-purple-400">
+                            <TrendingUp className="h-5 w-5" />
+                        </div>
+                        <div>
+                            <p className="text-sm font-medium text-slate-500">Daily Calls Goal</p>
+                            <p className="text-2xl font-bold text-white">{totalCalls} / {goals.dailyCalls}</p>
                         </div>
                     </div>
                 </div>
@@ -73,10 +84,10 @@ export default function AnalyticsPage() {
 
                 <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-6 lg:col-span-2">
                     <div className="mb-6 flex items-center justify-between">
-                        <h3 className="text-lg font-bold text-white">Commission Progress</h3>
+                        <h3 className="text-lg font-bold text-white">Goals Progress</h3>
                         <Target className="h-4 w-4 text-slate-500" />
                     </div>
-                    <GoalProgressChart prospects={prospects} goals={goals} />
+                    <GoalProgressChart prospects={prospects} goals={goals} totalCalls={totalCalls} />
                 </div>
             </div>
         </div>

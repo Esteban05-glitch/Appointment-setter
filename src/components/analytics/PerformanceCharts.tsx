@@ -88,27 +88,37 @@ export function PlatformPerformanceChart({ prospects }: { prospects: Prospect[] 
     );
 }
 
-export function GoalProgressChart({ prospects, goals }: PerformanceChartsProps) {
+export function GoalProgressChart({ prospects, goals, totalCalls }: PerformanceChartsProps & { totalCalls: number }) {
     const closedDeals = prospects.filter(p => p.status === "closed");
     const currentCommission = closedDeals.reduce((acc, p) => acc + ((p.value || 0) * (p.commissionRate || 10) / 100), 0);
 
     const data = [
-        { name: "Progress", current: currentCommission, goal: goals.monthlyCommission }
+        { name: "Comisión ($)", current: currentCommission, goal: goals.monthlyCommission, type: 'currency' },
+        { name: "Llamadas (Cant.)", current: totalCalls, goal: goals.dailyCalls, type: 'number' }
     ];
 
     return (
         <div className="h-[300px] w-full">
             <ResponsiveContainer width="100%" height="100%">
-                <BarChart layout="vertical" data={data} margin={{ left: 20, right: 20 }}>
+                <BarChart layout="vertical" data={data} margin={{ left: 40, right: 40, top: 20, bottom: 20 }}>
                     <XAxis type="number" hide />
-                    <YAxis type="category" dataKey="name" hide />
+                    <YAxis
+                        type="category"
+                        dataKey="name"
+                        stroke="#94a3b8"
+                        fontSize={11}
+                        width={100}
+                    />
                     <Tooltip
                         contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '8px' }}
                         itemStyle={{ color: '#f1f5f9' }}
-                        formatter={(value) => `$${Number(value).toLocaleString()}`}
+                        formatter={(value, name, props) => {
+                            const isCurrency = props.payload.type === 'currency';
+                            return [isCurrency ? `$${Number(value).toLocaleString()}` : value, name];
+                        }}
                     />
-                    <Bar dataKey="goal" fill="#1e293b" radius={[4, 4, 4, 4]} barSize={40} name="Monthly Goal" />
-                    <Bar dataKey="current" fill="#10b981" radius={[4, 4, 4, 4]} barSize={40} name="Realized Commission" />
+                    <Bar dataKey="goal" fill="#1e293b" radius={[0, 4, 4, 0]} barSize={32} name="Objetivo" stackId="a" />
+                    <Bar dataKey="current" fill="#10b981" radius={[0, 4, 4, 0]} barSize={32} name="Actual" stackId="b" />
                 </BarChart>
             </ResponsiveContainer>
         </div>

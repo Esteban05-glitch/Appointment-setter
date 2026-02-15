@@ -4,10 +4,11 @@ import { useApp } from "@/context/AppContext";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { FollowUpWidget } from "@/components/dashboard/FollowUpWidget";
 import { CommissionCalc } from "@/components/dashboard/CommissionCalc";
+import { QuickActions } from "@/components/dashboard/QuickActions";
 import { Users, DollarSign, Target, Calendar } from "lucide-react";
 
 export default function DashboardPage() {
-    const { prospects } = useApp();
+    const { prospects, totalCalls, logCall } = useApp();
 
     // Stats calculations
     const totalLeads = prospects.length;
@@ -62,15 +63,19 @@ export default function DashboardPage() {
                 />
             </div>
 
-            <div className="grid gap-6 lg:grid-cols-2">
-                {/* Follow ups are critical for setters */}
-                <FollowUpWidget />
-
-                {/* Quick tool for potential deals */}
-                <CommissionCalc />
+            <div className="grid gap-6 lg:grid-cols-3">
+                <div className="lg:col-span-1">
+                    <QuickActions />
+                </div>
+                <div className="lg:col-span-1">
+                    <FollowUpWidget />
+                </div>
+                <div className="lg:col-span-1">
+                    <CommissionCalc />
+                </div>
             </div>
 
-            <div className="rounded-xl border border-slate-800 bg-slate-900/40 p-12 text-center">
+            <div className="rounded-xl border border-slate-800 bg-slate-900/40 p-12 text-center border-dashed">
                 <p className="text-slate-500 text-sm">Próximamente: Ranking de Plataformas y Gráficos de Actividades Diarias.</p>
             </div>
         </div>
