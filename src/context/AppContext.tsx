@@ -112,7 +112,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
                     priority: (p.priority || "medium") as Prospect["priority"],
                     value: p.value,
                     lastContact: p.last_contact || new Date().toISOString(),
-                    notesCount: p.prospect_notes ? (p.prospect_notes[0] as any).count : 0
+                    notesCount: p.prospect_notes ? (p.prospect_notes[0] as any).count : 0,
+                    qualBudget: p.qual_budget,
+                    qualAuthority: p.qual_authority,
+                    qualNeed: p.qual_need,
+                    qualTiming: p.qual_timing
                 })));
             }
 
@@ -135,6 +139,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
                 priority: prospect.priority,
                 value: prospect.value,
                 last_contact: prospect.lastContact || new Date().toISOString(),
+                qual_budget: prospect.qualBudget || false,
+                qual_authority: prospect.qualAuthority || false,
+                qual_need: prospect.qualNeed || false,
+                qual_timing: prospect.qualTiming || false,
                 user_id: user.id
             })
             .select()
@@ -199,6 +207,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
         if (updates.priority) dbUpdates.priority = updates.priority;
         if (updates.value !== undefined) dbUpdates.value = updates.value;
         if (updates.lastContact) dbUpdates.last_contact = updates.lastContact;
+        if (updates.qualBudget !== undefined) dbUpdates.qual_budget = updates.qualBudget;
+        if (updates.qualAuthority !== undefined) dbUpdates.qual_authority = updates.qualAuthority;
+        if (updates.qualNeed !== undefined) dbUpdates.qual_need = updates.qualNeed;
+        if (updates.qualTiming !== undefined) dbUpdates.qual_timing = updates.qualTiming;
 
         const { error } = await supabase
             .from('prospects')

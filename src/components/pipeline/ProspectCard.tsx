@@ -150,6 +150,37 @@ export function ProspectCard({ prospect, onEdit, onOpenNotes }: ProspectCardProp
                                     </button>
                                 </div>
                             </div>
+
+                            {/* QualCheck (BANT) Indicator */}
+                            <div className="mt-2.5 flex items-center gap-1">
+                                {[
+                                    { char: 'B', label: 'Budget', state: prospect.qualBudget },
+                                    { char: 'A', label: 'Authority', state: prospect.qualAuthority },
+                                    { char: 'N', label: 'Need', state: prospect.qualNeed },
+                                    { char: 'T', label: 'Timing', state: prospect.qualTiming },
+                                ].map((item) => (
+                                    <div
+                                        key={item.char}
+                                        title={item.label}
+                                        className={cn(
+                                            "flex h-4.5 w-4.5 items-center justify-center rounded-md text-[9px] font-black transition-all border",
+                                            item.state
+                                                ? "border-emerald-500/50 bg-emerald-500/20 text-emerald-400 shadow-[0_0_8px_rgba(16,185,129,0.2)]"
+                                                : "border-slate-800 bg-slate-950/50 text-slate-700 font-bold"
+                                        )}
+                                    >
+                                        {item.char}
+                                    </div>
+                                ))}
+                                <div className="ml-1 h-1 flex-1 rounded-full bg-slate-800 overflow-hidden">
+                                    <div
+                                        className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 transition-all duration-500 ease-out shadow-[0_0_8px_rgba(16,185,129,0.4)]"
+                                        style={{
+                                            width: `${(([prospect.qualBudget, prospect.qualAuthority, prospect.qualNeed, prospect.qualTiming].filter(Boolean).length) / 4) * 100}%`
+                                        }}
+                                    />
+                                </div>
+                            </div>
                         </div>
 
                         {/* Actions Menu */}

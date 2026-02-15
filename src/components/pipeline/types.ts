@@ -19,6 +19,10 @@ export interface Prospect {
     value?: number;
     notesCount?: number;
     tags?: string[];
+    qualBudget?: boolean;
+    qualAuthority?: boolean;
+    qualNeed?: boolean;
+    qualTiming?: boolean;
 }
 
 export type ColumnType = {

@@ -18,6 +18,10 @@ CREATE TABLE prospects (
   priority TEXT DEFAULT 'medium',
   value NUMERIC DEFAULT 0,
   last_contact TEXT,
+  qual_budget BOOLEAN DEFAULT FALSE,
+  qual_authority BOOLEAN DEFAULT FALSE,
+  qual_need BOOLEAN DEFAULT FALSE,
+  qual_timing BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
 );

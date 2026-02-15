@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X } from "lucide-react";
+import { X, Check } from "lucide-react";
 import { Prospect } from "./types";
 import { cn } from "@/lib/utils";
 
@@ -18,6 +18,10 @@ export function EditProspectModal({ isOpen, onClose, prospect, onUpdate }: EditP
     const [platform, setPlatform] = useState<Prospect["platform"]>("instagram");
     const [value, setValue] = useState("");
     const [priority, setPriority] = useState<Prospect["priority"]>("medium");
+    const [qualBudget, setQualBudget] = useState(false);
+    const [qualAuthority, setQualAuthority] = useState(false);
+    const [qualNeed, setQualNeed] = useState(false);
+    const [qualTiming, setQualTiming] = useState(false);
 
     useEffect(() => {
         if (prospect) {
@@ -26,6 +30,10 @@ export function EditProspectModal({ isOpen, onClose, prospect, onUpdate }: EditP
             setPlatform(prospect.platform);
             setValue(prospect.value?.toString() || "");
             setPriority(prospect.priority);
+            setQualBudget(prospect.qualBudget || false);
+            setQualAuthority(prospect.qualAuthority || false);
+            setQualNeed(prospect.qualNeed || false);
+            setQualTiming(prospect.qualTiming || false);
         }
     }, [prospect]);
 
@@ -39,6 +47,10 @@ export function EditProspectModal({ isOpen, onClose, prospect, onUpdate }: EditP
             platform,
             priority,
             value: value ? Number(value) : undefined,
+            qualBudget,
+            qualAuthority,
+            qualNeed,
+            qualTiming,
         });
         onClose();
     };
@@ -134,6 +146,38 @@ export function EditProspectModal({ isOpen, onClose, prospect, onUpdate }: EditP
                                 onChange={(e) => setValue(e.target.value)}
                                 className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-slate-200 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                             />
+                        </div>
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="block text-sm font-medium text-slate-400">QualCheck (BANT)</label>
+                        <div className="grid grid-cols-2 gap-2">
+                            {[
+                                { id: "budget", label: "Presupuesto", state: qualBudget, setter: setQualBudget },
+                                { id: "authority", label: "Autoridad", state: qualAuthority, setter: setQualAuthority },
+                                { id: "need", label: "Necesidad", state: qualNeed, setter: setQualNeed },
+                                { id: "timing", label: "Tiempo", state: qualTiming, setter: setQualTiming },
+                            ].map((item) => (
+                                <button
+                                    key={item.id}
+                                    type="button"
+                                    onClick={() => item.setter(!item.state)}
+                                    className={cn(
+                                        "flex items-center gap-2 rounded-lg border px-3 py-2 text-xs font-medium transition-all",
+                                        item.state
+                                            ? "border-emerald-500/50 bg-emerald-500/10 text-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.1)]"
+                                            : "border-slate-700 bg-slate-800 text-slate-500 hover:border-slate-600 hover:bg-slate-750"
+                                    )}
+                                >
+                                    <div className={cn(
+                                        "flex h-4 w-4 items-center justify-center rounded border transition-all",
+                                        item.state ? "border-emerald-500 bg-emerald-500 text-slate-900" : "border-slate-600 bg-slate-900"
+                                    )}>
+                                        {item.state && <Check className="h-3 w-3 stroke-[3]" />}
+                                    </div>
+                                    {item.label}
+                                </button>
+                            ))}
                         </div>
                     </div>
 

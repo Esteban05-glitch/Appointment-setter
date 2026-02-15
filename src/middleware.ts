@@ -54,11 +54,24 @@ export async function middleware(request: NextRequest) {
                 },
             }
         )
+        // This will refresh session if expired - necessary for Server Components
+        const { data: { user } } = await supabase.auth.getUser()
+
+        // Protect routes: Redirect to /login if there is no user and trying to access sensitive pages
+        if (!user &&
+            !request.nextUrl.pathname.startsWith('/login') &&
+            !request.nextUrl.pathname.startsWith('/auth')) {
+            return NextResponse.redirect(new URL('/login', request.url))
+        }
+
+        // Redirect to / if user is logged in and trying to access /login
+        if (user && request.nextUrl.pathname.startsWith('/login')) {
+            return NextResponse.redirect(new URL('/', request.url))
+        }
     } catch (e) {
         console.error('Middleware Supabase error:', e)
     }
 
-    // Temporarily disabled for 404 debugging
     return response
 }
 

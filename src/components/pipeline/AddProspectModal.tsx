@@ -17,6 +17,10 @@ export function AddProspectModal({ isOpen, onClose, onAdd }: AddProspectModalPro
     const [platform, setPlatform] = useState<Prospect["platform"]>("instagram");
     const [value, setValue] = useState("");
     const [priority, setPriority] = useState<Prospect["priority"]>("medium");
+    const [qualBudget, setQualBudget] = useState(false);
+    const [qualAuthority, setQualAuthority] = useState(false);
+    const [qualNeed, setQualNeed] = useState(false);
+    const [qualTiming, setQualTiming] = useState(false);
 
     if (!isOpen) return null;
 
@@ -28,6 +32,10 @@ export function AddProspectModal({ isOpen, onClose, onAdd }: AddProspectModalPro
             platform,
             priority,
             value: value ? Number(value) : undefined,
+            qualBudget,
+            qualAuthority,
+            qualNeed,
+            qualTiming,
         });
         // Reset form
         setName("");
@@ -35,6 +43,10 @@ export function AddProspectModal({ isOpen, onClose, onAdd }: AddProspectModalPro
         setPlatform("instagram");
         setValue("");
         setPriority("medium");
+        setQualBudget(false);
+        setQualAuthority(false);
+        setQualNeed(false);
+        setQualTiming(false);
     };
 
     return (
@@ -131,6 +143,38 @@ export function AddProspectModal({ isOpen, onClose, onAdd }: AddProspectModalPro
                                 className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-slate-200 placeholder-slate-500 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                                 placeholder="0.00"
                             />
+                        </div>
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="block text-sm font-medium text-slate-400">QualCheck (BANT)</label>
+                        <div className="grid grid-cols-2 gap-2">
+                            {[
+                                { id: "budget", label: "Budget", state: qualBudget, setter: setQualBudget },
+                                { id: "authority", label: "Authority", state: qualAuthority, setter: setQualAuthority },
+                                { id: "need", label: "Need", state: qualNeed, setter: setQualNeed },
+                                { id: "timing", label: "Timing", state: qualTiming, setter: setQualTiming },
+                            ].map((item) => (
+                                <button
+                                    key={item.id}
+                                    type="button"
+                                    onClick={() => item.setter(!item.state)}
+                                    className={cn(
+                                        "flex items-center gap-2 rounded-lg border px-3 py-2 text-xs font-medium transition-all",
+                                        item.state
+                                            ? "border-emerald-500/50 bg-emerald-500/10 text-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.1)]"
+                                            : "border-slate-700 bg-slate-800 text-slate-500 hover:border-slate-600 hover:bg-slate-750"
+                                    )}
+                                >
+                                    <div className={cn(
+                                        "flex h-4 w-4 items-center justify-center rounded border transition-all",
+                                        item.state ? "border-emerald-500 bg-emerald-500 text-slate-900" : "border-slate-600 bg-slate-900"
+                                    )}>
+                                        {item.state && <Check className="h-3 w-3 stroke-[3]" />}
+                                    </div>
+                                    {item.label}
+                                </button>
+                            ))}
                         </div>
                     </div>
 
