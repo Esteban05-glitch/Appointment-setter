@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, ReactNode, useRef } from "react";
 import { Prospect, ProspectNote } from "@/components/pipeline/types";
 import { createClient } from "@/lib/supabase/client";
 import { User } from "@supabase/supabase-js";
@@ -28,6 +28,7 @@ interface AppContextType {
     deleteNote: (noteId: string) => Promise<void>;
     totalCalls: number;
     logCall: () => void;
+    resetCalls: () => Promise<void>;
     goals: UserGoals;
     updateGoals: (goals: Partial<UserGoals>) => void;
     userProfile: UserProfile;
@@ -89,6 +90,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
                 });
                 if (profileData.goals) {
                     setGoals(profileData.goals);
+                }
+                if (profileData.total_calls !== undefined) {
+                    setTotalCalls(profileData.total_calls);
                 }
             }
 
@@ -293,6 +297,37 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setTotalCalls((prev) => prev + 1);
     };
 
+    // Debounced sync for total_calls
+    const syncTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    useEffect(() => {
+        if (!user || totalCalls === 0) return;
+
+        if (syncTimeoutRef.current) clearTimeout(syncTimeoutRef.current);
+
+        syncTimeoutRef.current = setTimeout(async () => {
+            await supabase
+                .from('profiles')
+                .update({ total_calls: totalCalls })
+                .eq('id', user.id);
+        }, 1000); // Wait 1s after last call to sync
+
+        return () => {
+            if (syncTimeoutRef.current) clearTimeout(syncTimeoutRef.current);
+        };
+    }, [totalCalls, user]);
+
+    const resetCalls = async () => {
+        if (!confirm("¿Seguro que quieres reiniciar el contador de llamadas?")) return;
+
+        setTotalCalls(0);
+        if (user) {
+            await supabase
+                .from('profiles')
+                .update({ total_calls: 0 })
+                .eq('id', user.id);
+        }
+    };
+
     const updateGoals = async (newGoals: Partial<UserGoals>) => {
         if (!user) return;
         const updatedGoals = { ...goals, ...newGoals };
@@ -349,7 +384,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
             prospects, setProspects, addProspect, updateProspectStatus, updateProspectPriority,
             deleteProspect, updateProspect,
             addNote, getNotes, deleteNote,
-            totalCalls, logCall,
+            totalCalls, logCall, resetCalls,
             goals, updateGoals,
             userProfile, updateUserProfile,
             resetData,

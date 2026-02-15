@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Phone, CheckCircle2, UserPlus, Zap } from "lucide-react";
+import { Phone, CheckCircle2, UserPlus, Zap, RotateCcw } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 import { cn } from "@/lib/utils";
 
 export function QuickActions() {
-    const { logCall, totalCalls } = useApp();
+    const { logCall, totalCalls, resetCalls } = useApp();
     const [isPressing, setIsPressing] = useState(false);
     const [progress, setProgress] = useState(0);
     const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -53,6 +53,14 @@ export function QuickActions() {
         };
     }, []);
 
+    const handleStart = (e: React.MouseEvent | React.TouchEvent) => {
+        if ('touches' in e) {
+            // Prevent scrolling/context menu on mobile hold
+            if (e.cancelable) e.preventDefault();
+        }
+        startPress();
+    };
+
     return (
         <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-6 backdrop-blur-md">
             <div className="flex items-center gap-2 mb-6">
@@ -63,16 +71,38 @@ export function QuickActions() {
             </div>
 
             <div className="grid grid-cols-1 gap-4">
+                {/* Header with Call Counter and Reset */}
+                <div className="flex items-center justify-between mb-2">
+                    <div className="flex flex-col">
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Llamadas Hoy</p>
+                        <p className="text-3xl font-black text-indigo-400 leading-none">{totalCalls}</p>
+                    </div>
+                    <button
+                        type="button"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            resetCalls();
+                        }}
+                        className="flex items-center gap-2 rounded-lg border border-slate-800 bg-slate-800/50 px-3 py-2 text-xs font-medium text-slate-400 transition-all hover:border-red-500/30 hover:bg-red-500/10 hover:text-red-400 active:scale-95"
+                        title="Reiniciar contador"
+                    >
+                        <RotateCcw className="h-3 w-3" />
+                        Reiniciar
+                    </button>
+                </div>
+
                 {/* Log Call Button with Long Press */}
                 <div className="relative">
                     <button
-                        onMouseDown={startPress}
+                        type="button"
+                        onMouseDown={handleStart}
                         onMouseUp={cancelPress}
                         onMouseLeave={cancelPress}
-                        onTouchStart={startPress}
+                        onTouchStart={handleStart}
                         onTouchEnd={cancelPress}
+                        onContextMenu={(e) => e.preventDefault()}
                         className={cn(
-                            "relative flex w-full items-center justify-between overflow-hidden rounded-xl border border-slate-700 bg-slate-800/50 p-4 transition-all active:scale-[0.98]",
+                            "relative flex w-full items-center justify-between overflow-hidden rounded-xl border border-slate-700 bg-slate-800/50 p-4 transition-all active:scale-[0.98] select-none touch-none",
                             isPressing ? "border-indigo-500/50 ring-2 ring-indigo-500/20" : "hover:border-slate-600 hover:bg-slate-800"
                         )}
                     >
@@ -85,12 +115,12 @@ export function QuickActions() {
                             </div>
                             <div className="text-left">
                                 <p className="text-sm font-bold text-slate-100">Registrar Llamada</p>
-                                <p className="text-[11px] text-slate-400">Mantén presionado para sumar</p>
+                                <p className="text-[11px] text-slate-400">Mantén presionado para sumar ráfaga</p>
                             </div>
                         </div>
-                        <div className="text-right">
-                            <p className="text-2xl font-black text-indigo-400">{totalCalls}</p>
-                            <p className="text-[9px] font-bold uppercase tracking-widest text-slate-500">Hoy</p>
+
+                        <div className="text-indigo-400/50">
+                            <Zap className={cn("h-5 w-5", isPressing && "animate-pulse text-indigo-400")} />
                         </div>
 
                         {/* Progress Bar Background */}
@@ -112,6 +142,7 @@ export function QuickActions() {
 
                 <div className="grid grid-cols-2 gap-4">
                     <button
+                        type="button"
                         onClick={() => window.location.href = '/pipeline?openAdd=true'}
                         className="flex flex-col items-center justify-center gap-2 rounded-xl border border-slate-800 bg-slate-800/30 p-4 transition-all hover:border-slate-700 hover:bg-slate-800/50"
                     >
@@ -119,6 +150,7 @@ export function QuickActions() {
                         <span className="text-xs font-medium text-slate-300">Nuevo Lead</span>
                     </button>
                     <button
+                        type="button"
                         onClick={() => window.location.href = '/pipeline'}
                         className="flex flex-col items-center justify-center gap-2 rounded-xl border border-slate-800 bg-slate-800/30 p-4 transition-all hover:border-slate-700 hover:bg-slate-800/50"
                     >
