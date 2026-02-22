@@ -14,7 +14,10 @@ export function FollowUpWidget() {
     const followUpNeeded = prospects.filter(p => {
         if (p.status === "closed" || p.status === "booked") return false;
 
+        // Skip if lastContact is not a valid date
         const lastContactDate = new Date(p.lastContact);
+        if (isNaN(lastContactDate.getTime())) return false;
+
         const now = new Date();
         const diffInHours = (now.getTime() - lastContactDate.getTime()) / (1000 * 60 * 60);
 
