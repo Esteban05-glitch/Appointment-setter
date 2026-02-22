@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode, useRef } from "react";
 import { Prospect, ProspectNote } from "@/components/pipeline/types";
+import { Appointment } from "@/components/calendar/types";
 import { createClient } from "@/lib/supabase/client";
 import { User } from "@supabase/supabase-js";
 
@@ -42,6 +43,11 @@ interface AppContextType {
     fetchArchivedProspects: () => Promise<void>;
     restoreProspect: (id: string) => Promise<void>;
     deleteArchivedProspect: (id: string) => Promise<void>;
+    appointments: Appointment[];
+    addAppointment: (appointment: Omit<Appointment, 'id' | 'user_id' | 'created_at'>) => Promise<void>;
+    updateAppointment: (id: string, updates: Partial<Appointment>) => Promise<void>;
+    deleteAppointment: (id: string) => Promise<void>;
+    fetchAppointments: () => Promise<void>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -59,6 +65,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         name: "Setter",
         title: "Appointment Setter",
     });
+    const [appointments, setAppointments] = useState<Appointment[]>([]);
 
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
@@ -140,6 +147,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
                         .update({ last_reset_month: currentMonth })
                         .eq('id', user.id);
                 }
+
+                await fetchAppointments();
             }
 
             // Fetch prospects from Supabase with notes count (filtering out archived)
@@ -491,6 +500,60 @@ export function AppProvider({ children }: { children: ReactNode }) {
         }
     };
 
+    const fetchAppointments = async () => {
+        if (!user) return;
+        const { data, error } = await supabase
+            .from('appointments')
+            .select('*')
+            .eq('user_id', user.id)
+            .order('date', { ascending: true })
+            .order('time', { ascending: true });
+
+        if (!error && data) {
+            setAppointments(data);
+        }
+    };
+
+    const addAppointment = async (appointment: Omit<Appointment, 'id' | 'user_id' | 'created_at'>) => {
+        if (!user) return;
+        const { error } = await supabase
+            .from('appointments')
+            .insert({
+                ...appointment,
+                user_id: user.id
+            });
+
+        if (!error) {
+            await fetchAppointments();
+        }
+    };
+
+    const updateAppointment = async (id: string, updates: Partial<Appointment>) => {
+        if (!user) return;
+        const { error } = await supabase
+            .from('appointments')
+            .update(updates)
+            .eq('id', id)
+            .eq('user_id', user.id);
+
+        if (!error) {
+            await fetchAppointments();
+        }
+    };
+
+    const deleteAppointment = async (id: string) => {
+        if (!user) return;
+        const { error } = await supabase
+            .from('appointments')
+            .delete()
+            .eq('id', id)
+            .eq('user_id', user.id);
+
+        if (!error) {
+            await fetchAppointments();
+        }
+    };
+
     return (
         <AppContext.Provider value={{
             prospects, setProspects, addProspect, updateProspectStatus, updateProspectPriority,
@@ -507,7 +570,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
             callHistory,
             fetchArchivedProspects,
             restoreProspect,
-            deleteArchivedProspect
+            deleteArchivedProspect,
+            appointments,
+            addAppointment,
+            updateAppointment,
+            deleteAppointment,
+            fetchAppointments
         }}>
             {children}
         </AppContext.Provider>
