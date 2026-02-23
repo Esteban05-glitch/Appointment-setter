@@ -74,10 +74,6 @@ export default function DashboardPage() {
                     <CommissionCalc />
                 </div>
             </div>
-
-            <div className="rounded-xl border border-slate-800 bg-slate-900/40 p-12 text-center border-dashed">
-                <p className="text-slate-500 text-sm">Próximamente: Ranking de Plataformas y Gráficos de Actividades Diarias.</p>
-            </div>
         </div>
     );
 }
