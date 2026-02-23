@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { KANBAN_COLUMNS, Prospect } from "./types";
 import { KanbanColumn } from "./KanbanColumn";
 import { AddProspectModal } from "./AddProspectModal";
@@ -15,6 +16,19 @@ export function KanbanBoard() {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isNotesModalOpen, setIsNotesModalOpen] = useState(false);
     const [activeProspect, setActiveProspect] = useState<Prospect | null>(null);
+    const searchParams = useSearchParams();
+    const router = useRouter();
+
+    useEffect(() => {
+        if (searchParams.get("openAdd") === "true") {
+            setIsModalOpen(true);
+            // Remove the query param so it doesn't reopen on refresh
+            const newParams = new URLSearchParams(searchParams.toString());
+            newParams.delete("openAdd");
+            const newPath = newParams.toString() ? `/pipeline?${newParams.toString()}` : "/pipeline";
+            router.replace(newPath);
+        }
+    }, [searchParams, router]);
 
     // Filter states
     const [searchQuery, setSearchQuery] = useState("");
