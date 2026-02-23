@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, KanbanSquare, MessageSquareText, Settings, BarChart3, Archive, CalendarDays } from "lucide-react";
+import { LayoutDashboard, KanbanSquare, MessageSquareText, Settings, BarChart3, Archive, CalendarDays, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navigation = [
     { name: "Dashboard", href: "/", icon: LayoutDashboard },
     { name: "Pipeline", href: "/pipeline", icon: KanbanSquare },
     { name: "Calendario", href: "/calendar", icon: CalendarDays },
+    { name: "Agencia", href: "/agency", icon: Users },
     { name: "Analytics", href: "/analytics", icon: BarChart3 },
     { name: "Scripts", href: "/scripts", icon: MessageSquareText },
     { name: "Archivo", href: "/archive", icon: Archive },

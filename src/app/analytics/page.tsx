@@ -1,11 +1,11 @@
 "use client";
 
 import { useApp } from "@/context/AppContext";
-import { ConversionRateChart, PlatformPerformanceChart, GoalProgressChart } from "@/components/analytics/PerformanceCharts";
-import { BarChart3, TrendingUp, Target, Share2 } from "lucide-react";
+import { ConversionRateChart, PlatformPerformanceChart, GoalProgressChart, MemberPerformanceChart } from "@/components/analytics/PerformanceCharts";
+import { BarChart3, TrendingUp, Target, Share2, Users } from "lucide-react";
 
 export default function AnalyticsPage() {
-    const { prospects, goals, totalCalls } = useApp();
+    const { prospects, goals, totalCalls, agency } = useApp();
 
     const totalLeads = prospects.length;
     const bookedLeads = prospects.filter(p => p.status === "booked").length;
@@ -14,8 +14,12 @@ export default function AnalyticsPage() {
     return (
         <div className="space-y-8 pb-12">
             <div>
-                <h2 className="text-3xl font-bold tracking-tight text-white">Performance Analytics</h2>
-                <p className="mt-2 text-slate-400">Deep dive into your conversion and platform data.</p>
+                <h2 className="text-3xl font-bold tracking-tight text-white">
+                    {agency ? `Analytics: ${agency.name}` : "Performance Analytics"}
+                </h2>
+                <p className="mt-2 text-slate-400">
+                    {agency ? "Métricas agregadas de todo tu equipo." : "Deep dive into your conversion and platform data."}
+                </p>
             </div>
 
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -25,7 +29,7 @@ export default function AnalyticsPage() {
                             <TrendingUp className="h-5 w-5" />
                         </div>
                         <div>
-                            <p className="text-sm font-medium text-slate-500">Global conversion</p>
+                            <p className="text-sm font-medium text-slate-500">{agency ? "Agencia Conversion" : "Global conversion"}</p>
                             <p className="text-2xl font-bold text-white">{conversionRate}%</p>
                         </div>
                     </div>
@@ -47,7 +51,7 @@ export default function AnalyticsPage() {
                             <TrendingUp className="h-5 w-5" />
                         </div>
                         <div>
-                            <p className="text-sm font-medium text-slate-500">Daily Calls Goal</p>
+                            <p className="text-sm font-medium text-slate-500">Daily Calls (Mine)</p>
                             <p className="text-2xl font-bold text-white">{totalCalls} / {goals.dailyCalls}</p>
                         </div>
                     </div>
@@ -58,8 +62,8 @@ export default function AnalyticsPage() {
                             <Share2 className="h-5 w-5" />
                         </div>
                         <div>
-                            <p className="text-sm font-medium text-slate-500">Active Platforms</p>
-                            <p className="text-2xl font-bold text-white">4</p>
+                            <p className="text-sm font-medium text-slate-500">Total Leads</p>
+                            <p className="text-2xl font-bold text-white">{totalLeads}</p>
                         </div>
                     </div>
                 </div>
@@ -82,9 +86,19 @@ export default function AnalyticsPage() {
                     <PlatformPerformanceChart prospects={prospects} />
                 </div>
 
+                {agency && (
+                    <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-6 lg:col-span-2">
+                        <div className="mb-6 flex items-center justify-between">
+                            <h3 className="text-lg font-bold text-white">Rendimiento por Miembro</h3>
+                            <Users className="h-4 w-4 text-slate-500" />
+                        </div>
+                        <MemberPerformanceChart prospects={prospects} />
+                    </div>
+                )}
+
                 <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-6 lg:col-span-2">
                     <div className="mb-6 flex items-center justify-between">
-                        <h3 className="text-lg font-bold text-white">Goals Progress</h3>
+                        <h3 className="text-lg font-bold text-white">Personal Goals Progress</h3>
                         <Target className="h-4 w-4 text-slate-500" />
                     </div>
                     <GoalProgressChart prospects={prospects} goals={goals} totalCalls={totalCalls} />

@@ -124,3 +124,36 @@ export function GoalProgressChart({ prospects, goals, totalCalls }: PerformanceC
         </div>
     );
 }
+export function MemberPerformanceChart({ prospects }: { prospects: Prospect[] }) {
+    const creators = Array.from(new Set(prospects.map(p => p.creatorName || "Unknown")));
+    const data = creators.map(creator => ({
+        name: creator,
+        prospects: prospects.filter(p => p.creatorName === creator).length,
+        booked: prospects.filter(p => p.creatorName === creator && p.status === "booked").length
+    })).sort((a, b) => b.prospects - a.prospects);
+
+    if (creators.length <= 1 && creators[0] === "Unknown") return (
+        <div className="flex items-center justify-center h-[300px] text-slate-500 text-sm italic">
+            No hay datos de otros miembros para mostrar.
+        </div>
+    );
+
+    return (
+        <div className="h-[300px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={data}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
+                    <XAxis dataKey="name" stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} />
+                    <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} />
+                    <Tooltip
+                        contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '8px' }}
+                        itemStyle={{ color: '#f1f5f9' }}
+                    />
+                    <Legend verticalAlign="top" align="right" />
+                    <Bar dataKey="prospects" fill="#6366f1" radius={[4, 4, 0, 0]} name="Prospectos" />
+                    <Bar dataKey="booked" fill="#10b981" radius={[4, 4, 0, 0]} name="Booked" />
+                </BarChart>
+            </ResponsiveContainer>
+        </div>
+    );
+}

@@ -8,5 +8,6 @@ export interface Appointment {
     time: string; // HH:mm
     duration_minutes: number;
     status: 'scheduled' | 'completed' | 'cancelled';
+    agency_id?: string | null;
     created_at?: string;
 }

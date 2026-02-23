@@ -6,6 +6,7 @@ export interface ProspectNote {
     prospectId: string;
     content: string;
     createdAt: string;
+    agencyId?: string | null;
 }
 
 export interface Prospect {
@@ -25,6 +26,28 @@ export interface Prospect {
     qualTiming?: boolean;
     commissionRate?: number;
     isArchived?: boolean;
+    agency_id?: string | null;
+    creatorName?: string;
+}
+
+export interface Agency {
+    id: string;
+    name: string;
+    logo_url: string | null;
+    owner_id: string;
+    created_at: string;
+}
+
+export interface AgencyMember {
+    id: string;
+    agency_id: string;
+    user_id: string;
+    role: 'owner' | 'admin' | 'setter';
+    created_at: string;
+    profiles?: {
+        full_name: string;
+        job_title: string;
+    };
 }
 
 export type ColumnType = {

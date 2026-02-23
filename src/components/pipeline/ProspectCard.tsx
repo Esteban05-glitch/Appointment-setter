@@ -219,11 +219,23 @@ export function ProspectCard({ prospect, onEdit, onOpenNotes }: ProspectCardProp
                     </div>
 
                     <div className="mt-3.5 flex items-center justify-between gap-2 border-t border-slate-800/60 pt-2.5">
-                        <div className="flex min-w-0 items-center gap-1.5">
-                            <Clock className="h-2.5 w-2.5 shrink-0 text-slate-600" />
-                            <span className="truncate text-[10px] text-slate-500">
-                                {formatLastContact(prospect.lastContact)}
-                            </span>
+                        <div className="flex min-w-0 flex-col gap-1">
+                            <div className="flex items-center gap-1.5 min-w-0">
+                                <Clock className="h-2.5 w-2.5 shrink-0 text-slate-600" />
+                                <span className="truncate text-[10px] text-slate-500">
+                                    {formatLastContact(prospect.lastContact)}
+                                </span>
+                            </div>
+                            {prospect.creatorName && (
+                                <div className="flex items-center gap-1.5 min-w-0">
+                                    <div className="h-3 w-3 rounded-full bg-slate-800 flex items-center justify-center">
+                                        <div className="h-1.5 w-1.5 rounded-full bg-indigo-500" />
+                                    </div>
+                                    <span className="truncate text-[9px] text-slate-400 font-medium">
+                                        Por: {prospect.creatorName}
+                                    </span>
+                                </div>
+                            )}
                         </div>
                         <div className="flex shrink-0 flex-col items-end gap-0.5">
                             {typeof prospect.value === 'number' && (
