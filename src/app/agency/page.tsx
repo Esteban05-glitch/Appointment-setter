@@ -27,6 +27,7 @@ export default function AgencyPage() {
     // Get current user's role in the agency
     const currentUserMember = agencyMembers.find(m => m.user_id === user?.id);
     const isAdmin = currentUserMember?.role === 'owner' || currentUserMember?.role === 'admin' || (agency && user && agency.owner_id === user.id);
+    const isOwner = currentUserMember?.role === 'owner' || (agency && user && agency.owner_id === user.id);
 
     // Fetch pending invites
     useEffect(() => {
@@ -387,7 +388,7 @@ export default function AgencyPage() {
                             </div>
                         )}
                     </div>
-                    {isAdmin && (
+                    {isOwner && (
                         <button
                             onClick={() => setIsInviting(true)}
                             className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl font-medium transition-all flex items-center gap-2"

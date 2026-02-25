@@ -49,6 +49,22 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
+CREATE OR REPLACE FUNCTION public.is_agency_owner(target_agency_id UUID)
+RETURNS BOOLEAN AS $$
+BEGIN
+  RETURN EXISTS (
+    SELECT 1 FROM public.agency_members
+    WHERE agency_id = target_agency_id
+    AND user_id = auth.uid()
+    AND role = 'owner'
+  ) OR EXISTS (
+    SELECT 1 FROM public.agencies
+    WHERE id = target_agency_id
+    AND owner_id = auth.uid()
+  );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
+
 -- 3. APPLY POLICIES
 
 -- AGENCIES
@@ -95,7 +111,7 @@ CREATE POLICY "notes_rbac" ON prospect_notes FOR ALL USING (user_id = auth.uid()
 -- INVITATIONS
 ALTER TABLE agency_invitations ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "invitations_rbac" ON agency_invitations FOR SELECT USING (lower(email) = lower(auth.jwt() ->> 'email') OR is_agency_admin(agency_id));
-CREATE POLICY "invitations_admin" ON agency_invitations FOR ALL USING (is_agency_admin(agency_id));
+CREATE POLICY "invitations_owner_manage" ON agency_invitations FOR ALL USING (is_agency_owner(agency_id));
 CREATE POLICY "invitations_accept" ON agency_invitations FOR UPDATE USING (lower(email) = lower(auth.jwt() ->> 'email'));
 
 -- 4. ENSURE OWNER IS LISTED AS MEMBER (Rescue operation)
