@@ -13,7 +13,7 @@ const roleLabels = {
 };
 
 export default function AgencyPage() {
-    const { agency, agencyMembers, user, fetchAgencyData } = useApp();
+    const { agency, agencyMembers, prospects, user, fetchAgencyData } = useApp();
     const [isCreating, setIsCreating] = useState(false);
     const [newAgencyName, setNewAgencyName] = useState("");
     const [loading, setLoading] = useState(false);
@@ -451,7 +451,7 @@ export default function AgencyPage() {
                                 </div>
                                 <div className="flex justify-between items-center py-2 border-b border-slate-800/50">
                                     <span className="text-slate-400 text-sm">Prospectos Totales</span>
-                                    <span className="text-slate-100 font-medium">--</span>
+                                    <span className="text-slate-100 font-medium">{prospects.length}</span>
                                 </div>
                                 <div className="flex justify-between items-center py-2">
                                     <span className="text-slate-400 text-sm">Plan Actual</span>

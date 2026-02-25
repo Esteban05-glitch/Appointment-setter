@@ -151,18 +151,24 @@ export function AppProvider({ children }: { children: ReactNode }) {
             .eq('is_archived', false);
 
         if (memberData?.agency_id) {
-            query = query.eq('agency_id', memberData.agency_id);
+            // Include both agency prospects AND any orphaned prospects created by this user
+            query = query.or(`agency_id.eq.${memberData.agency_id},and(agency_id.is.null,user_id.eq.${user.id})`);
         } else {
             query = query.eq('user_id', user.id);
         }
 
-        const { data: prospectsData } = await query
+        const { data: prospectsData, error: prospectsError } = await query
             .select(`
                 *,
                 profiles:user_id(full_name),
                 prospect_notes:prospect_notes(count)
             `)
             .order('created_at', { ascending: false });
+
+        if (prospectsError) {
+            console.warn("Prospects loaded without creator names due to schema relationship sync.");
+            return;
+        }
 
         if (prospectsData) {
             setProspects(prospectsData.map(p => ({
@@ -337,6 +343,30 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
     const addProspect = async (prospect: Prospect) => {
         if (!user) return;
+
+        let targetAgencyId = agency?.id || null;
+
+        // Robustness: If agency state is not yet loaded, try a quick DB check
+        if (!targetAgencyId) {
+            const { data: member } = await supabase
+                .from('agency_members')
+                .select('agency_id')
+                .eq('user_id', user.id)
+                .maybeSingle();
+
+            if (member?.agency_id) {
+                targetAgencyId = member.agency_id;
+            } else {
+                // Check if they own an agency directly
+                const { data: owned } = await supabase
+                    .from('agencies')
+                    .select('id')
+                    .eq('owner_id', user.id)
+                    .maybeSingle();
+                if (owned) targetAgencyId = owned.id;
+            }
+        }
+
         const { data, error } = await supabase.from('prospects').insert({
             name: prospect.name,
             platform: prospect.platform,
@@ -351,10 +381,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
             qual_timing: prospect.qualTiming || false,
             commission_rate: prospect.commissionRate || 10,
             user_id: user.id,
-            agency_id: agency?.id || null
+            agency_id: targetAgencyId
         }).select().single();
 
-        if (!error && data) {
+        if (error) {
+            console.error("Error adding prospect to database:", error);
+            alert("Error al guardar el prospecto: " + error.message);
+            return;
+        }
+
+        if (data) {
             setProspects(prev => [{ ...prospect, id: data.id, agency_id: data.agency_id }, ...prev]);
         }
     };

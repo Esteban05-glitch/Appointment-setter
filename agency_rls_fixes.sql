@@ -130,3 +130,11 @@ DROP CONSTRAINT IF EXISTS agency_members_user_id_profiles_fkey;
 ALTER TABLE public.agency_members
 ADD CONSTRAINT agency_members_user_id_profiles_fkey 
 FOREIGN KEY (user_id) REFERENCES public.profiles(id) ON DELETE CASCADE;
+
+-- Prospects relationship
+ALTER TABLE public.prospects
+DROP CONSTRAINT IF EXISTS prospects_user_id_profiles_fkey;
+
+ALTER TABLE public.prospects
+ADD CONSTRAINT prospects_user_id_profiles_fkey 
+FOREIGN KEY (user_id) REFERENCES public.profiles(id) ON DELETE CASCADE;
