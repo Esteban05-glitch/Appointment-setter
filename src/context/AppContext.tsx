@@ -52,6 +52,8 @@ interface AppContextType {
     agencyMembers: AgencyMember[];
     fetchAgencyData: () => Promise<void>;
     fetchProspects: () => Promise<void>;
+    agencyProspectsCount: number;
+    userRole: 'owner' | 'admin' | 'setter' | null;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -72,6 +74,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const [appointments, setAppointments] = useState<Appointment[]>([]);
     const [agency, setAgency] = useState<Agency | null>(null);
     const [agencyMembers, setAgencyMembers] = useState<AgencyMember[]>([]);
+    const [agencyProspectsCount, setAgencyProspectsCount] = useState(0);
+    const [userRole, setUserRole] = useState<'owner' | 'admin' | 'setter' | null>(null);
 
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
@@ -109,6 +113,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
         if (currentAgency && agencyId) {
             setAgency(currentAgency);
 
+            // Fetch agency stats using RPC (bypasses RLS for counts)
+            const { data: stats } = await supabase.rpc('get_agency_stats', { target_agency_id: agencyId });
+            if (stats && stats.length > 0) {
+                setAgencyProspectsCount(stats[0].total_prospects);
+            }
+
             // Fetch members with profiles (Joins require explicit foreign keys in Supabase)
             const { data: allMembers, error: fetchError } = await supabase
                 .from('agency_members')
@@ -127,7 +137,20 @@ export function AppProvider({ children }: { children: ReactNode }) {
                 }
                 console.warn("Agency members loaded without profile details due to relationship cache delay.");
             } else if (allMembers) {
-                setAgencyMembers(allMembers as unknown as AgencyMember[]);
+                const membersWithProfiles = (allMembers as any[]).map(m => ({
+                    ...m,
+                    profiles: Array.isArray(m.profiles) ? m.profiles[0] : m.profiles
+                }));
+
+                setAgencyMembers(membersWithProfiles as AgencyMember[]);
+
+                // Set the current user's role
+                const currentMember = membersWithProfiles.find(m => m.user_id === user.id);
+                if (currentMember) {
+                    setUserRole(currentMember.role);
+                } else if (currentAgency.owner_id === user.id) {
+                    setUserRole('owner');
+                }
             }
         }
     }, [user, supabase]);
@@ -138,31 +161,34 @@ export function AppProvider({ children }: { children: ReactNode }) {
         // Check for agency membership
         const { data: memberData } = await supabase
             .from('agency_members')
-            .select('agency_id')
+            .select('agency_id, role')
             .eq('user_id', user.id)
             .single();
+
+        const userRole = memberData?.role || 'setter';
 
         let query = supabase
             .from('prospects')
             .select(`
                 *,
+                profiles:user_id(full_name),
                 prospect_notes:prospect_notes(count)
             `)
             .eq('is_archived', false);
 
         if (memberData?.agency_id) {
-            // Include both agency prospects AND any orphaned prospects created by this user
-            query = query.or(`agency_id.eq.${memberData.agency_id},and(agency_id.is.null,user_id.eq.${user.id})`);
+            if (userRole === 'owner' || userRole === 'admin') {
+                // Admins and owners see all agency prospects
+                query = query.or(`agency_id.eq.${memberData.agency_id},and(agency_id.is.null,user_id.eq.${user.id})`);
+            } else {
+                // Setters only see their own prospects, even if they belong to an agency
+                query = query.eq('user_id', user.id);
+            }
         } else {
             query = query.eq('user_id', user.id);
         }
 
         const { data: prospectsData, error: prospectsError } = await query
-            .select(`
-                *,
-                profiles:user_id(full_name),
-                prospect_notes:prospect_notes(count)
-            `)
             .order('created_at', { ascending: false });
 
         if (prospectsError) {
@@ -171,24 +197,30 @@ export function AppProvider({ children }: { children: ReactNode }) {
         }
 
         if (prospectsData) {
-            setProspects(prospectsData.map(p => ({
-                id: p.id,
-                name: p.name,
-                platform: p.platform,
-                handle: p.handle,
-                status: p.status as Prospect["status"],
-                priority: (p.priority || "medium") as Prospect["priority"],
-                value: p.value,
-                lastContact: p.last_contact || new Date().toISOString(),
-                notesCount: p.prospect_notes?.[0]?.count || 0,
-                qualBudget: p.qual_budget,
-                qualAuthority: p.qual_authority,
-                qualNeed: p.qual_need,
-                qualTiming: p.qual_timing,
-                commissionRate: p.commission_rate,
-                agency_id: p.agency_id,
-                creatorName: (p.profiles as any)?.full_name || "Unknown"
-            })));
+            setProspects(prospectsData.map(p => {
+                // Robust extraction of profiles (could be object or array)
+                const profile = Array.isArray(p.profiles) ? p.profiles[0] : p.profiles;
+
+                return {
+                    id: p.id,
+                    name: p.name,
+                    platform: p.platform,
+                    handle: p.handle,
+                    status: p.status as Prospect["status"],
+                    priority: (p.priority || "medium") as Prospect["priority"],
+                    value: p.value,
+                    lastContact: p.last_contact || new Date().toISOString(),
+                    notesCount: p.prospect_notes?.[0]?.count || 0,
+                    qualBudget: p.qual_budget,
+                    qualAuthority: p.qual_authority,
+                    qualNeed: p.qual_need,
+                    qualTiming: p.qual_timing,
+                    commissionRate: p.commission_rate,
+                    agency_id: p.agency_id,
+                    userId: p.user_id,
+                    creatorName: profile?.full_name || "Desconocido"
+                };
+            }));
         }
     }, [user, supabase]);
 
@@ -247,7 +279,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
                 qualNeed: p.qual_need,
                 qualTiming: p.qual_timing,
                 commissionRate: p.commission_rate,
-                agency_id: p.agency_id
+                agency_id: p.agency_id,
+                userId: p.user_id
             })));
         }
     }, [user, supabase]);
@@ -548,7 +581,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
             resetData, signOut, loading, user,
             archivedProspects, callHistory, fetchArchivedProspects, restoreProspect, deleteArchivedProspect,
             appointments, addAppointment, updateAppointment, deleteAppointment, fetchAppointments,
-            agency, agencyMembers, fetchAgencyData, fetchProspects
+            agency, agencyMembers, fetchAgencyData, fetchProspects, agencyProspectsCount,
+            userRole
         }}>
             {children}
         </AppContext.Provider>

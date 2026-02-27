@@ -11,7 +11,7 @@ import { Plus, Search, Filter, X } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 
 export function KanbanBoard() {
-    const { prospects, addProspect, updateProspectStatus, updateProspect } = useApp();
+    const { prospects, addProspect, updateProspectStatus, updateProspect, agencyMembers, userRole } = useApp();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isNotesModalOpen, setIsNotesModalOpen] = useState(false);
@@ -37,6 +37,7 @@ export function KanbanBoard() {
     const [minValue, setMinValue] = useState<string>("");
     const [maxValue, setMaxValue] = useState<string>("");
     const [sortBy, setSortBy] = useState<string>("newest");
+    const [creatorFilter, setCreatorFilter] = useState<string>("all");
 
     const handleAddProspect = (newProspectData: Omit<Prospect, "id" | "lastContact" | "status">) => {
         const newProspect: Prospect = {
@@ -76,6 +77,7 @@ export function KanbanBoard() {
         setMinValue("");
         setMaxValue("");
         setSortBy("newest");
+        setCreatorFilter("all");
     };
 
     // Apply filters and sorting
@@ -109,6 +111,11 @@ export function KanbanBoard() {
             filtered = filtered.filter(p => (p.value || 0) <= Number(maxValue));
         }
 
+        // Creator filter
+        if (creatorFilter !== "all") {
+            filtered = filtered.filter(p => p.userId === creatorFilter);
+        }
+
         // Sorting
         switch (sortBy) {
             case "newest":
@@ -130,7 +137,7 @@ export function KanbanBoard() {
         }
 
         return filtered;
-    }, [prospects, searchQuery, platformFilter, priorityFilter, minValue, maxValue, sortBy]);
+    }, [prospects, searchQuery, platformFilter, priorityFilter, minValue, maxValue, sortBy, creatorFilter]);
 
     const activeFilterCount = [
         searchQuery,
@@ -138,7 +145,8 @@ export function KanbanBoard() {
         priorityFilter !== "all",
         minValue,
         maxValue,
-        sortBy !== "newest"
+        sortBy !== "newest",
+        creatorFilter !== "all"
     ].filter(Boolean).length;
 
     return (
@@ -251,6 +259,24 @@ export function KanbanBoard() {
                             <option value="priority">Por prioridad</option>
                         </select>
                     </div>
+
+                    {/* Creator Filter - Only for Admins/Owners */}
+                    {(userRole === 'owner' || userRole === 'admin') && (
+                        <div>
+                            <select
+                                value={creatorFilter}
+                                onChange={(e) => setCreatorFilter(e.target.value)}
+                                className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-200 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                            >
+                                <option value="all">Todos los creadores</option>
+                                {agencyMembers.map(member => (
+                                    <option key={member.user_id} value={member.user_id}>
+                                        {member.profiles?.full_name || 'Miembro sin nombre'} ({member.role})
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
                 </div>
             </div>
 

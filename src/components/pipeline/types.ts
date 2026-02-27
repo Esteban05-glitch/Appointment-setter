@@ -28,6 +28,7 @@ export interface Prospect {
     isArchived?: boolean;
     agency_id?: string | null;
     creatorName?: string;
+    userId: string;
 }
 
 export interface Agency {

@@ -25,7 +25,7 @@ BEGIN
     SELECT 1 FROM public.agency_members
     WHERE agency_id = target_agency_id
     AND user_id = auth.uid()
-    AND role IN ('owner', 'admin')
+    AND lower(role) IN ('owner', 'admin')
   ) OR EXISTS (
     SELECT 1 FROM public.agencies
     WHERE id = target_agency_id
@@ -56,12 +56,23 @@ BEGIN
     SELECT 1 FROM public.agency_members
     WHERE agency_id = target_agency_id
     AND user_id = auth.uid()
-    AND role = 'owner'
+    AND lower(role) = 'owner'
   ) OR EXISTS (
     SELECT 1 FROM public.agencies
     WHERE id = target_agency_id
     AND owner_id = auth.uid()
   );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
+
+-- Stats helper (bypasses RLS to show "Big Picture" metrics to everyone)
+CREATE OR REPLACE FUNCTION public.get_agency_stats(target_agency_id UUID)
+RETURNS TABLE(total_prospects BIGINT, total_members BIGINT) AS $$
+BEGIN
+  RETURN QUERY
+  SELECT 
+    (SELECT COUNT(*) FROM public.prospects WHERE agency_id = target_agency_id AND is_archived = false),
+    (SELECT COUNT(*) FROM public.agency_members WHERE agency_id = target_agency_id);
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
@@ -98,15 +109,48 @@ CREATE POLICY "profiles_team" ON profiles FOR SELECT USING (
     )
 );
 
--- DATA TABLES
+-- DATA TABLES (Role-based Privacy)
 ALTER TABLE prospects ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "prospects_rbac" ON prospects FOR ALL USING (user_id = auth.uid() OR is_agency_member(agency_id));
+CREATE POLICY "prospects_select" ON prospects 
+  FOR SELECT USING (
+    user_id = auth.uid() 
+    OR is_agency_admin(agency_id) -- Only Admins/Owners see everything
+  );
+CREATE POLICY "prospects_manage" ON prospects 
+  FOR ALL USING (
+    user_id = auth.uid() 
+    OR is_agency_admin(agency_id)
+  );
 
 ALTER TABLE appointments ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "appointments_rbac" ON appointments FOR ALL USING (user_id = auth.uid() OR is_agency_member(agency_id));
+CREATE POLICY "appointments_privacy" ON appointments 
+  FOR SELECT USING (
+    user_id = auth.uid() 
+    OR is_agency_admin(agency_id)
+  );
+CREATE POLICY "appointments_manage" ON appointments 
+  FOR ALL USING (
+    user_id = auth.uid() 
+    OR is_agency_admin(agency_id)
+  );
 
 ALTER TABLE prospect_notes ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "notes_rbac" ON prospect_notes FOR ALL USING (user_id = auth.uid() OR is_agency_member(agency_id));
+
+-- PROFILES (Public inside the agency)
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "profiles_agency_view" ON profiles
+  FOR SELECT USING (
+    id = auth.uid() 
+    OR EXISTS (
+      SELECT 1 FROM agency_members m1
+      JOIN agency_members m2 ON m1.agency_id = m2.agency_id
+      WHERE m1.user_id = auth.uid()
+      AND m2.user_id = profiles.id
+    )
+  );
+CREATE POLICY "profiles_self_manage" ON profiles
+  FOR ALL USING (id = auth.uid());
 
 -- INVITATIONS
 ALTER TABLE agency_invitations ENABLE ROW LEVEL SECURITY;
