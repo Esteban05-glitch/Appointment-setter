@@ -8,10 +8,13 @@ import { cn } from "@/lib/utils";
 interface AddProspectModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onAdd: (prospect: Omit<Prospect, "id" | "lastContact" | "status" | "userId">) => void;
+    onAdd: (prospect: Omit<Prospect, "id" | "lastContact" | "status" | "userId"> & { userId: string }) => void;
+    agencyMembers: any[];
+    userRole: string | null;
+    currentUserId: string;
 }
 
-export function AddProspectModal({ isOpen, onClose, onAdd }: AddProspectModalProps) {
+export function AddProspectModal({ isOpen, onClose, onAdd, agencyMembers, userRole, currentUserId }: AddProspectModalProps) {
     const [name, setName] = useState("");
     const [handle, setHandle] = useState("");
     const [platform, setPlatform] = useState<Prospect["platform"]>("instagram");
@@ -22,6 +25,7 @@ export function AddProspectModal({ isOpen, onClose, onAdd }: AddProspectModalPro
     const [qualAuthority, setQualAuthority] = useState(false);
     const [qualNeed, setQualNeed] = useState(false);
     const [qualTiming, setQualTiming] = useState(false);
+    const [assignedUserId, setAssignedUserId] = useState(currentUserId);
 
     if (!isOpen) return null;
 
@@ -38,6 +42,7 @@ export function AddProspectModal({ isOpen, onClose, onAdd }: AddProspectModalPro
             qualAuthority,
             qualNeed,
             qualTiming,
+            userId: assignedUserId,
         });
         // Reset form
         setName("");
@@ -63,6 +68,29 @@ export function AddProspectModal({ isOpen, onClose, onAdd }: AddProspectModalPro
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
+                    {/* Assignment Selector - Only for Admins/Owners */}
+                    {(userRole === 'owner' || userRole === 'admin') && (
+                        <div>
+                            <label className="mb-1.5 block text-sm font-medium text-slate-400">Asignar lead a</label>
+                            <select
+                                value={assignedUserId}
+                                onChange={(e) => setAssignedUserId(e.target.value)}
+                                className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-200 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                            >
+                                <option value={currentUserId}>
+                                    Mí mismo ({userRole === 'owner' ? 'Dueño' : 'Administrador'})
+                                </option>
+                                {agencyMembers
+                                    .filter(m => m.user_id !== currentUserId && m.role === 'setter')
+                                    .map(member => (
+                                        <option key={member.user_id} value={member.user_id}>
+                                            {member.profiles?.full_name || 'Miembro sin nombre'} ({member.role})
+                                        </option>
+                                    ))}
+                            </select>
+                        </div>
+                    )}
+
                     <div>
                         <label className="mb-1.5 block text-sm font-medium text-slate-400">Name</label>
                         <input

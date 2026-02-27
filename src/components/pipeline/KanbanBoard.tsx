@@ -39,15 +39,14 @@ export function KanbanBoard() {
     const [sortBy, setSortBy] = useState<string>("newest");
     const [creatorFilter, setCreatorFilter] = useState<string>("all");
 
-    const handleAddProspect = (newProspectData: Omit<Prospect, "id" | "lastContact" | "status" | "userId">) => {
+    const handleAddProspect = (newProspectData: Omit<Prospect, "id" | "lastContact" | "status" | "userId"> & { userId: string }) => {
         if (!user) return;
 
         const newProspect: Prospect = {
             id: Math.random().toString(36).substr(2, 9),
             ...newProspectData,
             status: "new_lead",
-            lastContact: new Date().toISOString(),
-            userId: user.id
+            lastContact: new Date().toISOString()
         };
         addProspect(newProspect);
         setIsModalOpen(false);
@@ -300,6 +299,9 @@ export function KanbanBoard() {
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 onAdd={handleAddProspect}
+                agencyMembers={agencyMembers}
+                userRole={userRole}
+                currentUserId={user?.id || ''}
             />
 
             <EditProspectModal

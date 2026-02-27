@@ -413,7 +413,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
             qual_need: prospect.qualNeed || false,
             qual_timing: prospect.qualTiming || false,
             commission_rate: prospect.commissionRate || 10,
-            user_id: user.id,
+            user_id: prospect.userId || user.id,
             agency_id: targetAgencyId
         }).select().single();
 
