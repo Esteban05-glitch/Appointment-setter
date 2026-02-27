@@ -8,23 +8,26 @@ import { QuickActions } from "@/components/dashboard/QuickActions";
 import { Users, DollarSign, Target, Calendar } from "lucide-react";
 
 export default function DashboardPage() {
-    const { prospects, totalCalls, logCall } = useApp();
+    const { prospects, totalCalls, logCall, user } = useApp();
 
-    // Stats calculations
-    const totalLeads = prospects.length;
-    const activeLeads = prospects.filter(p => !["booked", "closed"].includes(p.status)).length;
+    // Only show personal stats on the dashboard
+    const personalProspects = prospects.filter(p => p.userId === user?.id);
 
-    // Comisión total realizada (Closed) - Usando la nueva lógica de commissionRate
-    const realizedCommission = prospects
+    // Stats calculations using personal data
+    const totalLeads = personalProspects.length;
+    const activeLeads = personalProspects.filter(p => !["booked", "closed"].includes(p.status)).length;
+
+    // Comisión total realizada (Closed) - Usando personalProspects
+    const realizedCommission = personalProspects
         .filter(p => p.status === "closed")
         .reduce((acc, p) => acc + ((p.value || 0) * (p.commissionRate || 10) / 100), 0);
 
-    // Comisión potencial (Pipeline activo) - Usando la nueva lógica de commissionRate
-    const pipelineCommission = prospects
+    // Comisión potencial (Pipeline activo) - Usando personalProspects
+    const pipelineCommission = personalProspects
         .filter(p => !["booked", "closed"].includes(p.status))
         .reduce((acc, p) => acc + ((p.value || 0) * (p.commissionRate || 10) / 100), 0);
 
-    const bookedThisMonth = prospects.filter(p => p.status === "booked").length;
+    const bookedThisMonth = personalProspects.filter(p => p.status === "booked").length;
 
     return (
         <div className="space-y-8 pb-12">

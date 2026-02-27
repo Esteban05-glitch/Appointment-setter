@@ -1,25 +1,57 @@
 "use client";
 
 import { useApp } from "@/context/AppContext";
+import { useState, useMemo } from "react";
 import { ConversionRateChart, PlatformPerformanceChart, GoalProgressChart, MemberPerformanceChart } from "@/components/analytics/PerformanceCharts";
 import { BarChart3, TrendingUp, Target, Share2, Users } from "lucide-react";
 
 export default function AnalyticsPage() {
-    const { prospects, goals, totalCalls, agency } = useApp();
+    const { prospects, goals, totalCalls, agency, user, userRole } = useApp();
+    const [viewMode, setViewMode] = useState<'personal' | 'agency'>(userRole === 'setter' ? 'personal' : 'agency');
 
-    const totalLeads = prospects.length;
-    const bookedLeads = prospects.filter(p => p.status === "booked").length;
+    // Personal vs Agency prospects
+    const personalProspects = useMemo(() => prospects.filter(p => p.userId === user?.id), [prospects, user]);
+    const displayProspects = viewMode === 'agency' ? prospects : personalProspects;
+
+    const totalLeads = displayProspects.length;
+    const bookedLeads = displayProspects.filter(p => p.status === "booked").length;
     const conversionRate = totalLeads > 0 ? ((bookedLeads / totalLeads) * 100).toFixed(1) : "0";
 
     return (
         <div className="space-y-8 pb-12">
-            <div>
-                <h2 className="text-3xl font-bold tracking-tight text-white">
-                    {agency ? `Analytics: ${agency.name}` : "Performance Analytics"}
-                </h2>
-                <p className="mt-2 text-slate-400">
-                    {agency ? "Métricas agregadas de todo tu equipo." : "Deep dive into your conversion and platform data."}
-                </p>
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div>
+                    <h2 className="text-3xl font-bold tracking-tight text-white">
+                        {agency ? `Analytics: ${agency.name}` : "Performance Analytics"}
+                    </h2>
+                    <p className="mt-2 text-slate-400">
+                        {viewMode === 'agency' ? "Métricas agregadas de todo tu equipo." : "Tus métricas personales de conversión."}
+                    </p>
+                </div>
+
+                {/* View Toggle - Only for Admins/Owners */}
+                {(userRole === 'owner' || userRole === 'admin') && (
+                    <div className="flex bg-slate-900 border border-slate-800 p-1 rounded-xl">
+                        <button
+                            onClick={() => setViewMode('personal')}
+                            className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${viewMode === 'personal'
+                                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20'
+                                : 'text-slate-400 hover:text-slate-200'
+                                }`}
+                        >
+                            Mi Rendimiento
+                        </button>
+                        <button
+                            onClick={() => setViewMode('agency')}
+                            className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${viewMode === 'agency'
+                                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20'
+                                : 'text-slate-400 hover:text-slate-200'
+                                }`}
+                        >
+                            Vista de Agencia
+                        </button>
+                    </div>
+                )}
             </div>
 
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -75,7 +107,7 @@ export default function AnalyticsPage() {
                         <h3 className="text-lg font-bold text-white">Funnel Distribution</h3>
                         <BarChart3 className="h-4 w-4 text-slate-500" />
                     </div>
-                    <ConversionRateChart prospects={prospects} />
+                    <ConversionRateChart prospects={displayProspects} />
                 </div>
 
                 <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-6">
@@ -83,7 +115,7 @@ export default function AnalyticsPage() {
                         <h3 className="text-lg font-bold text-white">Platform ROI</h3>
                         <Share2 className="h-4 w-4 text-slate-500" />
                     </div>
-                    <PlatformPerformanceChart prospects={prospects} />
+                    <PlatformPerformanceChart prospects={displayProspects} />
                 </div>
 
                 {agency && (
@@ -101,7 +133,7 @@ export default function AnalyticsPage() {
                         <h3 className="text-lg font-bold text-white">Personal Goals Progress</h3>
                         <Target className="h-4 w-4 text-slate-500" />
                     </div>
-                    <GoalProgressChart prospects={prospects} goals={goals} totalCalls={totalCalls} />
+                    <GoalProgressChart prospects={personalProspects} goals={goals} totalCalls={totalCalls} />
                 </div>
             </div>
         </div>
