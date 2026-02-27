@@ -11,7 +11,7 @@ import { Plus, Search, Filter, X } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 
 export function KanbanBoard() {
-    const { prospects, addProspect, updateProspectStatus, updateProspect, agencyMembers, userRole } = useApp();
+    const { prospects, addProspect, updateProspectStatus, updateProspect, agencyMembers, userRole, user } = useApp();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isNotesModalOpen, setIsNotesModalOpen] = useState(false);
@@ -39,12 +39,15 @@ export function KanbanBoard() {
     const [sortBy, setSortBy] = useState<string>("newest");
     const [creatorFilter, setCreatorFilter] = useState<string>("all");
 
-    const handleAddProspect = (newProspectData: Omit<Prospect, "id" | "lastContact" | "status">) => {
+    const handleAddProspect = (newProspectData: Omit<Prospect, "id" | "lastContact" | "status" | "userId">) => {
+        if (!user) return;
+
         const newProspect: Prospect = {
             id: Math.random().toString(36).substr(2, 9),
             ...newProspectData,
             status: "new_lead",
             lastContact: new Date().toISOString(),
+            userId: user.id
         };
         addProspect(newProspect);
         setIsModalOpen(false);

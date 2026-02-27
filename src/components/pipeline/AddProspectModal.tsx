@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 interface AddProspectModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onAdd: (prospect: Omit<Prospect, "id" | "lastContact" | "status">) => void;
+    onAdd: (prospect: Omit<Prospect, "id" | "lastContact" | "status" | "userId">) => void;
 }
 
 export function AddProspectModal({ isOpen, onClose, onAdd }: AddProspectModalProps) {
