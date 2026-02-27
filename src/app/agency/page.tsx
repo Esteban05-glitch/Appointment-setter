@@ -2,8 +2,9 @@
 
 import { useApp } from "@/context/AppContext";
 import { useState, useEffect } from "react";
-import { Users, Plus, Shield, Mail, UserPlus, Building2, Bell, X, Check } from "lucide-react";
+import { Users, Plus, Shield, Mail, UserPlus, Building2, Bell, X, Check, BookOpen } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { DocumentationModal } from "@/components/agency/DocumentationModal";
 
 // Role display names
 const roleLabels = {
@@ -22,6 +23,7 @@ export default function AgencyPage() {
     const [inviteEmail, setInviteEmail] = useState("");
     const [inviteRole, setInviteRole] = useState<'admin' | 'setter'>('setter');
     const [showInvites, setShowInvites] = useState(false);
+    const [showDocs, setShowDocs] = useState(false);
     const supabase = createClient();
 
     // Get current user's role in the agency
@@ -466,7 +468,11 @@ export default function AgencyPage() {
                         <p className="text-xs text-slate-400 mb-4 leading-relaxed">
                             ¿Necesitas ayuda para configurar los roles de tu equipo o invitar nuevos miembros?
                         </p>
-                        <button className="w-full py-2.5 rounded-xl border border-slate-800 text-slate-300 text-sm hover:bg-slate-800 transition-all">
+                        <button
+                            onClick={() => setShowDocs(true)}
+                            className="w-full py-2.5 rounded-xl border border-slate-800 text-slate-300 text-sm hover:bg-slate-800 transition-all flex items-center justify-center gap-2"
+                        >
+                            <BookOpen className="w-4 h-4" />
                             Ver Documentación
                         </button>
                     </div>
@@ -533,6 +539,11 @@ export default function AgencyPage() {
                     </div>
                 </div>
             )}
+
+            <DocumentationModal
+                isOpen={showDocs}
+                onClose={() => setShowDocs(false)}
+            />
         </div>
     );
 }
