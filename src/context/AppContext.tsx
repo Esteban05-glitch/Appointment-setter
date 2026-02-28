@@ -8,7 +8,7 @@ import { User } from "@supabase/supabase-js";
 
 interface UserGoals {
     monthlyCommission: number;
-    dailyCalls: number;
+    monthlyCalls: number;
 }
 
 interface UserProfile {
@@ -65,7 +65,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const [totalCalls, setTotalCalls] = useState(0);
     const [goals, setGoals] = useState<UserGoals>({
         monthlyCommission: 5000,
-        dailyCalls: 50,
+        monthlyCalls: 50,
     });
     const [userProfile, setUserProfile] = useState<UserProfile>({
         name: "Setter",
@@ -316,7 +316,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
                     name: profileData.full_name || "Setter",
                     title: profileData.job_title || "Appointment Setter",
                 });
-                if (profileData.goals) setGoals(profileData.goals);
+                if (profileData.goals) {
+                    const loadedGoals = profileData.goals as any;
+                    setGoals({
+                        monthlyCommission: loadedGoals.monthlyCommission || 5000,
+                        monthlyCalls: loadedGoals.monthlyCalls || loadedGoals.dailyCalls || 50
+                    });
+                }
                 if (profileData.total_calls !== undefined) setTotalCalls(profileData.total_calls);
                 if (profileData.call_history) setCallHistory(profileData.call_history);
 

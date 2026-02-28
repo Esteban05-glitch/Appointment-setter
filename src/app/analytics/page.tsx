@@ -83,8 +83,8 @@ export default function AnalyticsPage() {
                             <TrendingUp className="h-5 w-5" />
                         </div>
                         <div>
-                            <p className="text-sm font-medium text-slate-500">Daily Calls (Mine)</p>
-                            <p className="text-2xl font-bold text-white">{totalCalls} / {goals.dailyCalls}</p>
+                            <p className="text-sm font-medium text-slate-500">Monthly Calls (Mine)</p>
+                            <p className="text-2xl font-bold text-white">{totalCalls} / {goals.monthlyCalls}</p>
                         </div>
                     </div>
                 </div>

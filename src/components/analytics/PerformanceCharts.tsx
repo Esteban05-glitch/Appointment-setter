@@ -19,7 +19,7 @@ import { Prospect } from "../pipeline/types";
 
 interface PerformanceChartsProps {
     prospects: Prospect[];
-    goals: { monthlyCommission: number; dailyCalls: number };
+    goals: { monthlyCommission: number; monthlyCalls: number };
 }
 
 const COLORS = ["#6366f1", "#06b6d4", "#8b5cf6", "#10b981", "#f59e0b"];
@@ -94,7 +94,7 @@ export function GoalProgressChart({ prospects, goals, totalCalls }: PerformanceC
 
     const data = [
         { name: "Comisión ($)", current: currentCommission, goal: goals.monthlyCommission, type: 'currency' },
-        { name: "Llamadas (Cant.)", current: totalCalls, goal: goals.dailyCalls, type: 'number' }
+        { name: "Llamadas (Cant.)", current: totalCalls, goal: goals.monthlyCalls, type: 'number' }
     ];
 
     return (

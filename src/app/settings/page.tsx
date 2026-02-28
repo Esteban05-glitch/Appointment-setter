@@ -14,7 +14,7 @@ export default function SettingsPage() {
     const handleSave = () => {
         updateGoals({
             monthlyCommission: Number(localGoals.monthlyCommission || 0),
-            dailyCalls: Number(localGoals.dailyCalls || 0),
+            monthlyCalls: Number(localGoals.monthlyCalls || 0),
         });
         updateUserProfile(localProfile);
         setIsSaved(true);
@@ -95,17 +95,17 @@ export default function SettingsPage() {
                                 <label className="text-sm font-medium text-slate-300">Monthly Commission Goal ($)</label>
                                 <input
                                     type="number"
-                                    value={localGoals.monthlyCommission}
+                                    value={localGoals.monthlyCommission ?? ''}
                                     onChange={(e) => setLocalGoals({ ...localGoals, monthlyCommission: e.target.value })}
                                     className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-slate-200 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-sm font-medium text-slate-300">Daily Calls Goal</label>
+                                <label className="text-sm font-medium text-slate-300">Monthly Calls Goal</label>
                                 <input
                                     type="number"
-                                    value={localGoals.dailyCalls}
-                                    onChange={(e) => setLocalGoals({ ...localGoals, dailyCalls: e.target.value })}
+                                    value={localGoals.monthlyCalls ?? ''}
+                                    onChange={(e) => setLocalGoals({ ...localGoals, monthlyCalls: e.target.value })}
                                     className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-slate-200 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                                 />
                             </div>
