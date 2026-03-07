@@ -40,6 +40,7 @@ interface AppContextType {
     user: User | null;
     archivedProspects: Prospect[];
     callHistory: { month: string; total: number }[];
+    teamCallHistories: Record<string, { month: string; total: number }[]>;
     fetchArchivedProspects: () => Promise<void>;
     restoreProspect: (id: string) => Promise<void>;
     deleteArchivedProspect: (id: string) => Promise<void>;
@@ -76,6 +77,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const [agencyMembers, setAgencyMembers] = useState<AgencyMember[]>([]);
     const [agencyProspectsCount, setAgencyProspectsCount] = useState(0);
     const [userRole, setUserRole] = useState<'owner' | 'admin' | 'setter' | null>(null);
+    const [teamCallHistories, setTeamCallHistories] = useState<Record<string, { month: string; total: number }[]>>({});
 
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
@@ -329,6 +331,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
                     .sort((a, b) => b.month.localeCompare(a.month)); // Newest first
 
                 setCallHistory(consolidated);
+
+                // Store individual histories for filtering
+                const individualHistories: Record<string, { month: string; total: number }[]> = {};
+                teamProfiles.forEach((m: any) => {
+                    const history = Array.isArray(m.profiles) ? m.profiles[0]?.call_history : m.profiles?.call_history;
+                    if (Array.isArray(history)) {
+                        individualHistories[m.user_id] = history;
+                    }
+                });
+                setTeamCallHistories(individualHistories);
             }
         }
     }, [user, supabase, agency]);
@@ -636,7 +648,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
             archivedProspects, callHistory, fetchArchivedProspects, restoreProspect, deleteArchivedProspect,
             appointments, addAppointment, updateAppointment, deleteAppointment, fetchAppointments,
             agency, agencyMembers, fetchAgencyData, fetchProspects, agencyProspectsCount,
-            userRole
+            userRole, teamCallHistories
         }}>
             {children}
         </AppContext.Provider>

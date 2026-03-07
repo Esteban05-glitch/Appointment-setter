@@ -2,16 +2,38 @@
 
 import { useApp } from "@/context/AppContext";
 import { useEffect } from "react";
-import { Archive, RotateCcw, Trash2, Phone, TrendingUp } from "lucide-react";
-import { Prospect } from "@/components/pipeline/types";
+import { Archive, RotateCcw, Trash2, Phone, TrendingUp, ChevronDown } from "lucide-react";
+import { Prospect, AgencyMember } from "@/components/pipeline/types";
+import { useState, useMemo } from "react";
 
 export default function ArchivePage() {
-    const { archivedProspects, callHistory, fetchArchivedProspects, restoreProspect, deleteArchivedProspect, userRole, agency } = useApp();
+    const {
+        archivedProspects,
+        callHistory,
+        fetchArchivedProspects,
+        restoreProspect,
+        deleteArchivedProspect,
+        userRole,
+        agency,
+        agencyMembers,
+        teamCallHistories
+    } = useApp();
+    const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
     const isAgencyAdmin = userRole === 'owner' || userRole === 'admin';
 
     useEffect(() => {
         fetchArchivedProspects();
-    }, []);
+    }, [fetchArchivedProspects]);
+
+    const displayProspects = useMemo(() => {
+        if (!selectedUserId) return archivedProspects;
+        return archivedProspects.filter(p => p.userId === selectedUserId);
+    }, [selectedUserId, archivedProspects]);
+
+    const displayCallHistory = useMemo(() => {
+        if (!selectedUserId) return callHistory;
+        return teamCallHistories[selectedUserId] || [];
+    }, [selectedUserId, callHistory, teamCallHistories]);
 
     const formatMonth = (monthStr: string) => {
         const [year, month] = monthStr.split('-');
@@ -36,9 +58,32 @@ export default function ArchivePage() {
                     {isAgencyAdmin ? `Archivo: ${agency?.name}` : "Mi Archivo"}
                 </h2>
                 <p className="mt-2 text-slate-400">
-                    {isAgencyAdmin ? "Historial consolidado de prospectos y llamadas de todo el equipo." : "Historial de prospectos ganados y llamadas mensuales."}
+                    {isAgencyAdmin ? "Resumen e historial detallado de todo tu equipo." : "Historial de prospectos ganados y llamadas mensuales."}
                 </p>
             </div>
+
+            {/* Filter Controls - Only for Admins/Owners */}
+            {isAgencyAdmin && agencyMembers.length > 0 && (
+                <div className="flex items-center gap-3">
+                    <div className="relative group">
+                        <select
+                            value={selectedUserId || ""}
+                            onChange={(e) => setSelectedUserId(e.target.value || null)}
+                            className="appearance-none bg-slate-900 border border-slate-800 text-white text-sm rounded-xl px-4 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all hover:bg-slate-800 cursor-pointer"
+                        >
+                            <option value="">Todo el Equipo</option>
+                            {agencyMembers.map((member) => (
+                                <option key={member.user_id} value={member.user_id}>
+                                    {member.profiles?.full_name || "Miembro sin nombre"}
+                                </option>
+                            ))}
+                        </select>
+                        <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-500">
+                            <ChevronDown className="h-4 w-4" />
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Call History Section */}
             <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-6">
@@ -47,15 +92,17 @@ export default function ArchivePage() {
                         <TrendingUp className="h-5 w-5" />
                     </div>
                     <h3 className="text-lg font-medium text-slate-200">
-                        {isAgencyAdmin ? "Historial de Llamadas del Equipo" : "Mi Historial de Llamadas"}
+                        {selectedUserId
+                            ? `Historial de: ${agencyMembers.find(m => m.user_id === selectedUserId)?.profiles?.full_name || "Miembro"}`
+                            : (isAgencyAdmin ? "Historial de Llamadas del Equipo" : "Mi Historial de Llamadas")}
                     </h3>
                 </div>
 
-                {callHistory.length === 0 ? (
-                    <p className="text-sm text-slate-500">No hay historial de llamadas aún.</p>
+                {displayCallHistory.length === 0 ? (
+                    <p className="text-sm text-slate-500">No hay historial de llamadas para mostrar.</p>
                 ) : (
                     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                        {callHistory.map((record, idx) => (
+                        {displayCallHistory.map((record, idx) => (
                             <div key={idx} className="rounded-lg border border-slate-700 bg-slate-800/50 p-4">
                                 <div className="flex items-center gap-2 mb-2">
                                     <Phone className="h-4 w-4 text-indigo-400" />
@@ -76,15 +123,17 @@ export default function ArchivePage() {
                         <Archive className="h-5 w-5" />
                     </div>
                     <h3 className="text-lg font-medium text-slate-200">
-                        {isAgencyAdmin ? "Prospectos Archivados del Equipo" : "Mis Prospectos Archivados"}
+                        {selectedUserId
+                            ? `Prospectos de: ${agencyMembers.find(m => m.user_id === selectedUserId)?.profiles?.full_name || "Miembro"}`
+                            : (isAgencyAdmin ? "Prospectos Archivados del Equipo" : "Mis Prospectos Archivados")}
                     </h3>
                 </div>
 
-                {archivedProspects.length === 0 ? (
-                    <p className="text-sm text-slate-500">No hay prospectos archivados.</p>
+                {displayProspects.length === 0 ? (
+                    <p className="text-sm text-slate-500">No hay prospectos archivados para mostrar.</p>
                 ) : (
                     <div className="space-y-3">
-                        {archivedProspects.map((prospect) => (
+                        {displayProspects.map((prospect) => (
                             <div key={prospect.id} className="rounded-lg border border-slate-700 bg-slate-800/50 p-4 flex items-center justify-between">
                                 <div className="flex items-center gap-4">
                                     <div className={`rounded-lg px-3 py-1 text-xs font-medium ${getPlatformColor(prospect.platform)}`}>
