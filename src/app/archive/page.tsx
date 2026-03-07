@@ -6,7 +6,8 @@ import { Archive, RotateCcw, Trash2, Phone, TrendingUp } from "lucide-react";
 import { Prospect } from "@/components/pipeline/types";
 
 export default function ArchivePage() {
-    const { archivedProspects, callHistory, fetchArchivedProspects, restoreProspect, deleteArchivedProspect } = useApp();
+    const { archivedProspects, callHistory, fetchArchivedProspects, restoreProspect, deleteArchivedProspect, userRole, agency } = useApp();
+    const isAgencyAdmin = userRole === 'owner' || userRole === 'admin';
 
     useEffect(() => {
         fetchArchivedProspects();
@@ -31,8 +32,12 @@ export default function ArchivePage() {
     return (
         <div className="space-y-8 max-w-7xl">
             <div>
-                <h2 className="text-3xl font-bold tracking-tight text-white">Archivo</h2>
-                <p className="mt-2 text-slate-400">Historial de prospectos ganados y llamadas mensuales.</p>
+                <h2 className="text-3xl font-bold tracking-tight text-white">
+                    {isAgencyAdmin ? `Archivo: ${agency?.name}` : "Mi Archivo"}
+                </h2>
+                <p className="mt-2 text-slate-400">
+                    {isAgencyAdmin ? "Historial consolidado de prospectos y llamadas de todo el equipo." : "Historial de prospectos ganados y llamadas mensuales."}
+                </p>
             </div>
 
             {/* Call History Section */}
@@ -41,7 +46,9 @@ export default function ArchivePage() {
                     <div className="rounded-lg bg-indigo-500/10 p-2 text-indigo-400">
                         <TrendingUp className="h-5 w-5" />
                     </div>
-                    <h3 className="text-lg font-medium text-slate-200">Historial de Llamadas</h3>
+                    <h3 className="text-lg font-medium text-slate-200">
+                        {isAgencyAdmin ? "Historial de Llamadas del Equipo" : "Mi Historial de Llamadas"}
+                    </h3>
                 </div>
 
                 {callHistory.length === 0 ? (
@@ -68,7 +75,9 @@ export default function ArchivePage() {
                     <div className="rounded-lg bg-emerald-500/10 p-2 text-emerald-400">
                         <Archive className="h-5 w-5" />
                     </div>
-                    <h3 className="text-lg font-medium text-slate-200">Prospectos Archivados</h3>
+                    <h3 className="text-lg font-medium text-slate-200">
+                        {isAgencyAdmin ? "Prospectos Archivados del Equipo" : "Mis Prospectos Archivados"}
+                    </h3>
                 </div>
 
                 {archivedProspects.length === 0 ? (
@@ -83,7 +92,15 @@ export default function ArchivePage() {
                                     </div>
                                     <div>
                                         <p className="font-medium text-slate-200">{prospect.name}</p>
-                                        <p className="text-sm text-slate-500">@{prospect.handle}</p>
+                                        <div className="flex items-center gap-2">
+                                            <p className="text-sm text-slate-500">@{prospect.handle}</p>
+                                            {isAgencyAdmin && prospect.creatorName && (
+                                                <>
+                                                    <span className="text-slate-700 text-xs">•</span>
+                                                    <span className="text-xs font-medium text-indigo-400/80">{prospect.creatorName}</span>
+                                                </>
+                                            )}
+                                        </div>
                                     </div>
                                     {prospect.value && (
                                         <div className="text-sm text-emerald-400 font-medium">

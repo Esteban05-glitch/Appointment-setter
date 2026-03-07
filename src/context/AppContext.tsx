@@ -253,37 +253,85 @@ export function AppProvider({ children }: { children: ReactNode }) {
     const fetchArchivedProspects = useCallback(async () => {
         if (!user) return;
 
-        const { data } = await supabase
+        // 1. Determine role and agency
+        const { data: memberData } = await supabase
+            .from('agency_members')
+            .select('agency_id, role')
+            .eq('user_id', user.id)
+            .single();
+
+        const role = memberData?.role || (agency?.owner_id === user.id ? 'owner' : 'setter');
+        const agencyId = memberData?.agency_id || agency?.id;
+
+        // 2. Fetch Archived Prospects
+        let query = supabase
             .from('prospects')
             .select(`
                 *,
+                profiles:user_id(full_name),
                 prospect_notes:prospect_notes(count)
             `)
-            .eq('user_id', user.id)
-            .eq('is_archived', true)
-            .order('created_at', { ascending: false });
+            .eq('is_archived', true);
 
-        if (data) {
-            setArchivedProspects(data.map(p => ({
-                id: p.id,
-                name: p.name,
-                platform: p.platform,
-                handle: p.handle,
-                status: p.status as Prospect["status"],
-                priority: (p.priority || "medium") as Prospect["priority"],
-                value: p.value,
-                lastContact: p.last_contact || new Date().toISOString(),
-                notesCount: p.prospect_notes?.[0]?.count || 0,
-                qualBudget: p.qual_budget,
-                qualAuthority: p.qual_authority,
-                qualNeed: p.qual_need,
-                qualTiming: p.qual_timing,
-                commissionRate: p.commission_rate,
-                agency_id: p.agency_id,
-                userId: p.user_id
-            })));
+        if (agencyId && (role === 'owner' || role === 'admin')) {
+            query = query.eq('agency_id', agencyId);
+        } else {
+            query = query.eq('user_id', user.id);
         }
-    }, [user, supabase]);
+
+        const { data: prospectsData } = await query.order('created_at', { ascending: false });
+
+        if (prospectsData) {
+            setArchivedProspects(prospectsData.map(p => {
+                const profile = Array.isArray(p.profiles) ? p.profiles[0] : p.profiles;
+                return {
+                    id: p.id,
+                    name: p.name,
+                    platform: p.platform,
+                    handle: p.handle,
+                    status: p.status as Prospect["status"],
+                    priority: (p.priority || "medium") as Prospect["priority"],
+                    value: p.value,
+                    lastContact: p.last_contact || new Date().toISOString(),
+                    notesCount: p.prospect_notes?.[0]?.count || 0,
+                    qualBudget: p.qual_budget,
+                    qualAuthority: p.qual_authority,
+                    qualNeed: p.qual_need,
+                    qualTiming: p.qual_timing,
+                    commissionRate: p.commission_rate,
+                    agency_id: p.agency_id,
+                    userId: p.user_id,
+                    creatorName: profile?.full_name || "Desconocido"
+                };
+            }));
+        }
+
+        // 3. Aggregate Call History if Owner/Admin
+        if (agencyId && (role === 'owner' || role === 'admin')) {
+            const { data: teamProfiles } = await supabase
+                .from('agency_members')
+                .select('user_id, profiles:user_id(call_history)')
+                .eq('agency_id', agencyId);
+
+            if (teamProfiles) {
+                const globalHistory: Record<string, number> = {};
+                teamProfiles.forEach((m: any) => {
+                    const history = Array.isArray(m.profiles) ? m.profiles[0]?.call_history : m.profiles?.call_history;
+                    if (Array.isArray(history)) {
+                        history.forEach((entry: { month: string; total: number }) => {
+                            globalHistory[entry.month] = (globalHistory[entry.month] || 0) + (entry.total || 0);
+                        });
+                    }
+                });
+
+                const consolidated = Object.entries(globalHistory)
+                    .map(([month, total]) => ({ month, total }))
+                    .sort((a, b) => b.month.localeCompare(a.month)); // Newest first
+
+                setCallHistory(consolidated);
+            }
+        }
+    }, [user, supabase, agency]);
 
     // --- EFFECTS ---
 
