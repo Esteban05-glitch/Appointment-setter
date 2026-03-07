@@ -26,11 +26,11 @@ const COLORS = ["#6366f1", "#06b6d4", "#8b5cf6", "#10b981", "#f59e0b"];
 
 export function ConversionRateChart({ prospects }: { prospects: Prospect[] }) {
     const data = [
-        { name: "New Leads", value: prospects.filter((p) => p.status === "new_lead").length },
-        { name: "Contacted", value: prospects.filter((p) => p.status === "contacted").length },
-        { name: "In Conversation", value: prospects.filter((p) => p.status === "conversation").length },
-        { name: "Booked", value: prospects.filter((p) => p.status === "booked").length },
-        { name: "Closed", value: prospects.filter((p) => p.status === "closed").length },
+        { name: "Prospectos Nuevos", value: prospects.filter((p) => p.status === "new_lead").length },
+        { name: "Contactados", value: prospects.filter((p) => p.status === "contacted").length },
+        { name: "En Conversación", value: prospects.filter((p) => p.status === "conversation").length },
+        { name: "Agendados", value: prospects.filter((p) => p.status === "booked").length },
+        { name: "Cerrados", value: prospects.filter((p) => p.status === "closed").length },
     ].filter(d => d.value > 0);
 
     return (
@@ -80,8 +80,8 @@ export function PlatformPerformanceChart({ prospects }: { prospects: Prospect[] 
                         contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '8px' }}
                         itemStyle={{ color: '#f1f5f9' }}
                     />
-                    <Bar dataKey="prospects" fill="#6366f1" radius={[4, 4, 0, 0]} name="Total Leads" />
-                    <Bar dataKey="booked" fill="#06b6d4" radius={[4, 4, 0, 0]} name="Booked" />
+                    <Bar dataKey="prospects" fill="#6366f1" radius={[4, 4, 0, 0]} name="Prospectos Totales" />
+                    <Bar dataKey="booked" fill="#06b6d4" radius={[4, 4, 0, 0]} name="Agendados" />
                 </BarChart>
             </ResponsiveContainer>
         </div>
@@ -151,7 +151,7 @@ export function MemberPerformanceChart({ prospects }: { prospects: Prospect[] })
                     />
                     <Legend verticalAlign="top" align="right" />
                     <Bar dataKey="prospects" fill="#6366f1" radius={[4, 4, 0, 0]} name="Prospectos" />
-                    <Bar dataKey="booked" fill="#10b981" radius={[4, 4, 0, 0]} name="Booked" />
+                    <Bar dataKey="booked" fill="#10b981" radius={[4, 4, 0, 0]} name="Agendados" />
                 </BarChart>
             </ResponsiveContainer>
         </div>

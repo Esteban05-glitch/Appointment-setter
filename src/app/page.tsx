@@ -33,7 +33,7 @@ export default function DashboardPage() {
         <div className="space-y-8 pb-12">
             <div className="flex flex-col gap-2">
                 <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-                    Dashboard <span className="bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">General</span>
+                    Panel <span className="bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">General</span>
                 </h2>
                 <p className="text-slate-400">Bienvenido de nuevo. Aquí tienes un resumen de tu actividad.</p>
             </div>

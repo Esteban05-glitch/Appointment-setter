@@ -61,7 +61,7 @@ export function AddProspectModal({ isOpen, onClose, onAdd, agencyMembers, userRo
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
             <div className="w-full max-w-md rounded-xl border border-slate-800 bg-slate-900 p-6 shadow-2xl">
                 <div className="mb-4 flex items-center justify-between">
-                    <h3 className="text-xl font-bold text-white">Add New Prospect</h3>
+                    <h3 className="text-xl font-bold text-white">Añadir Nuevo Prospecto</h3>
                     <button onClick={onClose} className="rounded-lg p-2 text-slate-400 hover:bg-slate-800 hover:text-white">
                         <X className="h-5 w-5" />
                     </button>
@@ -71,7 +71,7 @@ export function AddProspectModal({ isOpen, onClose, onAdd, agencyMembers, userRo
                     {/* Assignment Selector - Only for Admins/Owners */}
                     {(userRole === 'owner' || userRole === 'admin') && (
                         <div>
-                            <label className="mb-1.5 block text-sm font-medium text-slate-400">Asignar lead a</label>
+                            <label className="mb-1.5 block text-sm font-medium text-slate-400">Asignar prospecto a</label>
                             <select
                                 value={assignedUserId}
                                 onChange={(e) => setAssignedUserId(e.target.value)}
@@ -92,20 +92,20 @@ export function AddProspectModal({ isOpen, onClose, onAdd, agencyMembers, userRo
                     )}
 
                     <div>
-                        <label className="mb-1.5 block text-sm font-medium text-slate-400">Name</label>
+                        <label className="mb-1.5 block text-sm font-medium text-slate-400">Nombre</label>
                         <input
                             type="text"
                             required
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-slate-200 placeholder-slate-500 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                            placeholder="e.g. Alex Hormozi"
+                            placeholder="ej. Alex Hormozi"
                         />
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="mb-1.5 block text-sm font-medium text-slate-400">Platform</label>
+                            <label className="mb-1.5 block text-sm font-medium text-slate-400">Plataforma</label>
                             <div className="grid grid-cols-2 gap-2">
                                 {(["instagram", "linkedin", "twitter", "facebook"] as const).map((p) => (
                                     <button
@@ -152,7 +152,7 @@ export function AddProspectModal({ isOpen, onClose, onAdd, agencyMembers, userRo
 
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="mb-1.5 block text-sm font-medium text-slate-400">Handle / Username</label>
+                            <label className="mb-1.5 block text-sm font-medium text-slate-400">Handle / Usuario</label>
                             <div className="relative">
                                 <span className="absolute left-3 top-2 text-slate-500">@</span>
                                 <input
@@ -161,12 +161,12 @@ export function AddProspectModal({ isOpen, onClose, onAdd, agencyMembers, userRo
                                     value={handle}
                                     onChange={(e) => setHandle(e.target.value)}
                                     className="w-full rounded-lg border border-slate-700 bg-slate-800 py-2 pl-7 pr-3 text-slate-200 placeholder-slate-500 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                                    placeholder="username"
+                                    placeholder="usuario"
                                 />
                             </div>
                         </div>
                         <div>
-                            <label className="mb-1.5 block text-sm font-medium text-slate-400">Est. Value ($)</label>
+                            <label className="mb-1.5 block text-sm font-medium text-slate-400">Valor Est. ($)</label>
                             <input
                                 type="number"
                                 value={value}
@@ -194,10 +194,10 @@ export function AddProspectModal({ isOpen, onClose, onAdd, agencyMembers, userRo
                         <label className="block text-sm font-medium text-slate-400">QualCheck (BANT)</label>
                         <div className="grid grid-cols-2 gap-2">
                             {[
-                                { id: "budget", label: "Budget", state: qualBudget, setter: setQualBudget },
-                                { id: "authority", label: "Authority", state: qualAuthority, setter: setQualAuthority },
-                                { id: "need", label: "Need", state: qualNeed, setter: setQualNeed },
-                                { id: "timing", label: "Timing", state: qualTiming, setter: setQualTiming },
+                                { id: "budget", label: "Presupuesto", state: qualBudget, setter: setQualBudget },
+                                { id: "authority", label: "Autoridad", state: qualAuthority, setter: setQualAuthority },
+                                { id: "need", label: "Necesidad", state: qualNeed, setter: setQualNeed },
+                                { id: "timing", label: "Tiempo", state: qualTiming, setter: setQualTiming },
                             ].map((item) => (
                                 <button
                                     key={item.id}
@@ -227,7 +227,7 @@ export function AddProspectModal({ isOpen, onClose, onAdd, agencyMembers, userRo
                         className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 py-2.5 font-semibold text-white transition-all hover:bg-indigo-500 hover:shadow-lg hover:shadow-indigo-500/20"
                     >
                         <Check className="h-4 w-4" />
-                        Add to Pipeline
+                        Añadir al Pipeline
                     </button>
                 </form>
             </div>

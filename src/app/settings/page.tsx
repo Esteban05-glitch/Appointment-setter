@@ -28,8 +28,8 @@ export default function SettingsPage() {
     return (
         <div className="space-y-8 max-w-4xl">
             <div>
-                <h2 className="text-3xl font-bold tracking-tight text-white">Settings</h2>
-                <p className="mt-2 text-slate-400">Manage your preferences and application data.</p>
+                <h2 className="text-3xl font-bold tracking-tight text-white">Configuración</h2>
+                <p className="mt-2 text-slate-400">Gestiona tus preferencias y los datos de la aplicación.</p>
             </div>
 
             <div className="grid gap-8 md:grid-cols-3">
@@ -38,11 +38,11 @@ export default function SettingsPage() {
                     <nav className="flex flex-col space-y-1">
                         <button className="flex items-center gap-3 rounded-lg bg-indigo-500/10 px-4 py-2 text-sm font-medium text-indigo-400">
                             <User className="h-4 w-4" />
-                            Profile
+                            Perfil
                         </button>
                         <button className="flex items-center gap-3 rounded-lg px-4 py-2 text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-slate-200 transition-colors">
                             <BarChart className="h-4 w-4" />
-                            Integrations
+                            Integraciones
                         </button>
                     </nav>
                 </div>
@@ -54,29 +54,29 @@ export default function SettingsPage() {
                     <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-6">
                         <h3 className="flex items-center gap-2 text-lg font-medium text-slate-200">
                             <User className="h-5 w-5 text-indigo-400" />
-                            Personal Profile
+                            Perfil Personal
                         </h3>
-                        <p className="mt-1 text-sm text-slate-500">Update your personal details.</p>
+                        <p className="mt-1 text-sm text-slate-500">Actualiza tus datos personales.</p>
 
                         <div className="mt-6 space-y-4">
                             <div className="space-y-2">
-                                <label className="text-sm font-medium text-slate-300">Display Name</label>
+                                <label className="text-sm font-medium text-slate-300">Nombre a Mostrar</label>
                                 <input
                                     type="text"
                                     value={localProfile.name}
                                     onChange={(e) => setLocalProfile({ ...localProfile, name: e.target.value })}
                                     className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-slate-200 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                                    placeholder="e.g. Sebastian"
+                                    placeholder="ej. Sebastian"
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-sm font-medium text-slate-300">Job Title</label>
+                                <label className="text-sm font-medium text-slate-300">Título del Puesto</label>
                                 <input
                                     type="text"
                                     value={localProfile.title}
                                     onChange={(e) => setLocalProfile({ ...localProfile, title: e.target.value })}
                                     className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-slate-200 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                                    placeholder="e.g. Appointment Setter"
+                                    placeholder="ej. Appointment Setter"
                                 />
                             </div>
                         </div>
@@ -86,13 +86,13 @@ export default function SettingsPage() {
                     <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-6">
                         <h3 className="flex items-center gap-2 text-lg font-medium text-slate-200">
                             <Target className="h-5 w-5 text-indigo-400" />
-                            Performance Goals
+                            Metas de Rendimiento
                         </h3>
-                        <p className="mt-1 text-sm text-slate-500">Set your targets to track your progress.</p>
+                        <p className="mt-1 text-sm text-slate-500">Establece tus objetivos para seguir tu progreso.</p>
 
                         <div className="mt-6 space-y-4">
                             <div className="space-y-2">
-                                <label className="text-sm font-medium text-slate-300">Monthly Commission Goal ($)</label>
+                                <label className="text-sm font-medium text-slate-300">Meta de Comisión Mensual ($)</label>
                                 <input
                                     type="number"
                                     value={localGoals.monthlyCommission ?? ''}
@@ -101,7 +101,7 @@ export default function SettingsPage() {
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-sm font-medium text-slate-300">Monthly Calls Goal</label>
+                                <label className="text-sm font-medium text-slate-300">Meta de Llamadas Mensuales</label>
                                 <input
                                     type="number"
                                     value={localGoals.monthlyCalls ?? ''}
@@ -117,12 +117,12 @@ export default function SettingsPage() {
                                 {isSaved ? (
                                     <>
                                         <RefreshCw className="h-4 w-4 animate-spin" />
-                                        Saved!
+                                        ¡Guardado!
                                     </>
                                 ) : (
                                     <>
                                         <Save className="h-4 w-4" />
-                                        Save Changes
+                                        Guardar Cambios
                                     </>
                                 )}
                             </button>
@@ -133,9 +133,9 @@ export default function SettingsPage() {
                     <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-6">
                         <h3 className="flex items-center gap-2 text-lg font-medium text-slate-200">
                             <Download className="h-5 w-5 text-indigo-400" />
-                            Data Management
+                            Gestión de Datos
                         </h3>
-                        <p className="mt-1 text-sm text-slate-500">Back up your data for use in Excel or Google Sheets.</p>
+                        <p className="mt-1 text-sm text-slate-500">Respalda tus datos para usarlos en Excel o Google Sheets.</p>
 
                         <div className="mt-6">
                             <button
@@ -152,9 +152,9 @@ export default function SettingsPage() {
                     <div className="rounded-xl border border-red-900/20 bg-red-950/10 p-6">
                         <h3 className="flex items-center gap-2 text-lg font-medium text-red-400">
                             <Trash2 className="h-5 w-5" />
-                            Danger Zone
+                            Zona de Peligro
                         </h3>
-                        <p className="mt-1 text-sm text-slate-500">Irreversible actions for your account data.</p>
+                        <p className="mt-1 text-sm text-slate-500">Acciones irreversibles para los datos de tu cuenta.</p>
 
                         <div className="mt-6">
                             <button
@@ -162,7 +162,7 @@ export default function SettingsPage() {
                                 className="flex items-center gap-2 rounded-lg border border-red-800 bg-red-950/30 px-4 py-2 text-sm font-medium text-red-400 transition-colors hover:bg-red-900/50"
                             >
                                 <Trash2 className="h-4 w-4" />
-                                Reset Application Data
+                                Reiniciar Datos de la Aplicación
                             </button>
                         </div>
                     </div>

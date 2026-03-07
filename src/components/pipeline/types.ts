@@ -58,9 +58,9 @@ export type ColumnType = {
 };
 
 export const KANBAN_COLUMNS: ColumnType[] = [
-    { id: "new_lead", title: "New Leads", color: "bg-slate-500" },
-    { id: "contacted", title: "Contacted", color: "bg-blue-500" },
-    { id: "conversation", title: "In Conversation", color: "bg-indigo-500" },
+    { id: "new_lead", title: "Prospectos Nuevos", color: "bg-slate-500" },
+    { id: "contacted", title: "Contactado", color: "bg-blue-500" },
+    { id: "conversation", title: "En Conversación", color: "bg-indigo-500" },
     { id: "booked", title: "Citas", color: "bg-cyan-500" },
-    { id: "closed", title: "Closed/Won", color: "bg-emerald-500" },
+    { id: "closed", title: "Cerrado/Ganado", color: "bg-emerald-500" },
 ];

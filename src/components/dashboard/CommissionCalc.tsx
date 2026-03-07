@@ -16,12 +16,12 @@ export function CommissionCalc() {
                 <div className="rounded-lg bg-emerald-500/10 p-2 text-emerald-400">
                     <Calculator className="h-5 w-5" />
                 </div>
-                <h3 className="text-lg font-medium text-slate-200">Commission Calculator</h3>
+                <h3 className="text-lg font-medium text-slate-200">Calculadora de Comisiones</h3>
             </div>
 
             <div className="space-y-4">
                 <div>
-                    <label className="mb-1.5 block text-xs font-medium text-slate-400">Avg. Deal Value ($)</label>
+                    <label className="mb-1.5 block text-xs font-medium text-slate-400">Valor Promedio ($)</label>
                     <div className="relative">
                         <DollarSign className="absolute left-3 top-2.5 h-4 w-4 text-slate-500" />
                         <input
@@ -35,7 +35,7 @@ export function CommissionCalc() {
 
                 <div className="grid grid-cols-2 gap-4">
                     <div>
-                        <label className="mb-1.5 block text-xs font-medium text-slate-400">Commission (%)</label>
+                        <label className="mb-1.5 block text-xs font-medium text-slate-400">Comisión (%)</label>
                         <input
                             type="number"
                             value={commissionRate}
@@ -44,7 +44,7 @@ export function CommissionCalc() {
                         />
                     </div>
                     <div>
-                        <label className="mb-1.5 block text-xs font-medium text-slate-400">Deals / Month</label>
+                        <label className="mb-1.5 block text-xs font-medium text-slate-400">Cierres / Mes</label>
                         <input
                             type="number"
                             value={dealsCount}
@@ -55,7 +55,7 @@ export function CommissionCalc() {
                 </div>
 
                 <div className="mt-6 rounded-lg bg-gradient-to-r from-emerald-500/20 to-teal-500/20 p-4 border border-emerald-500/20">
-                    <p className="text-xs font-medium text-emerald-400">Estimated Earnings</p>
+                    <p className="text-xs font-medium text-emerald-400">Ganancias Estimadas</p>
                     <p className="mt-1 text-2xl font-bold text-emerald-300">
                         ${totalCommission.toLocaleString()}
                     </p>

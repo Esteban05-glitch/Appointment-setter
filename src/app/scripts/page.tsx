@@ -117,8 +117,8 @@ export default function ScriptsPage() {
             <div className="flex-1 min-w-0">
                 <div className="mb-8 flex items-center justify-between">
                     <div>
-                        <h2 className="text-2xl font-bold text-white">Scripts & Templates</h2>
-                        <p className="text-slate-400">Quick copy-paste responses to speed up your workflow.</p>
+                        <h2 className="text-2xl font-bold text-white">Scripts y Plantillas</h2>
+                        <p className="text-slate-400">Respuestas rápidas para agilizar tu flujo de trabajo.</p>
                     </div>
 
                     <div className="flex items-center gap-2 rounded-lg bg-slate-900 p-1 border border-slate-800">
@@ -147,7 +147,7 @@ export default function ScriptsPage() {
                                 <button
                                     onClick={() => copyToClipboard(script.content, index)}
                                     className="rounded-lg p-2 text-slate-400 opacity-0 bg-slate-800 transition-all hover:text-white group-hover:opacity-100"
-                                    title="Copy to clipboard"
+                                    title="Copiar al portapapeles"
                                 >
                                     {copiedIndex === index ? <Check className="h-4 w-4 text-emerald-400" /> : <Copy className="h-4 w-4" />}
                                 </button>
@@ -173,8 +173,8 @@ export default function ScriptsPage() {
                             <Sparkles className="h-5 w-5 text-indigo-400" />
                         </div>
                         <div>
-                            <h3 className="font-bold text-white leading-none">AI Assistant</h3>
-                            <p className="text-[10px] text-indigo-400 mt-1 uppercase font-bold tracking-wider">Objection Specialist</p>
+                            <h3 className="font-bold text-white leading-none">Asistente de IA</h3>
+                            <p className="text-[10px] text-indigo-400 mt-1 uppercase font-bold tracking-wider">Especialista en Objeciones</p>
                         </div>
                     </div>
                 </div>

@@ -70,12 +70,12 @@ export default function LoginPage() {
                         SetterHQ
                     </h1>
                     <h2 className="mt-4 text-2xl font-bold text-white">
-                        {isLogin ? "Welcome back" : "Create your account"}
+                        {isLogin ? "Bienvenido de nuevo" : "Crea tu cuenta"}
                     </h2>
                     <p className="mt-2 text-sm text-slate-400">
                         {isLogin
-                            ? "Sign in to manage your high-ticket pipeline"
-                            : "Start tracking your appointments with ease"}
+                            ? "Inicia sesión para gestionar tu pipeline de alto valor"
+                            : "Comienza a trackear tus citas con facilidad"}
                     </p>
                 </div>
 
@@ -98,7 +98,7 @@ export default function LoginPage() {
                                     value={fullName}
                                     onChange={(e) => setFullName(e.target.value)}
                                     className="block w-full rounded-lg border border-slate-700 bg-slate-950 py-3 pl-10 pr-3 text-white placeholder-slate-500 ring-indigo-500 focus:border-indigo-500 focus:outline-none focus:ring-2 sm:text-sm"
-                                    placeholder="Full Name"
+                                    placeholder="Nombre Completo"
                                 />
                             </div>
                         )}
@@ -113,7 +113,7 @@ export default function LoginPage() {
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 className="block w-full rounded-lg border border-slate-700 bg-slate-950 py-3 pl-10 pr-3 text-white placeholder-slate-500 ring-indigo-500 focus:border-indigo-500 focus:outline-none focus:ring-2 sm:text-sm"
-                                placeholder="Email address"
+                                placeholder="Correo electrónico"
                             />
                         </div>
 
@@ -127,7 +127,7 @@ export default function LoginPage() {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 className="block w-full rounded-lg border border-slate-700 bg-slate-950 py-3 pl-10 pr-3 text-white placeholder-slate-500 ring-indigo-500 focus:border-indigo-500 focus:outline-none focus:ring-2 sm:text-sm"
-                                placeholder="Password"
+                                placeholder="Contraseña"
                             />
                         </div>
                     </div>
@@ -141,7 +141,7 @@ export default function LoginPage() {
                             {loading ? (
                                 <RefreshCw className="h-5 w-5 animate-spin" />
                             ) : (
-                                isLogin ? "Sign in" : "Sign up"
+                                isLogin ? "Iniciar sesión" : "Registrarse"
                             )}
                         </button>
                     </div>
@@ -153,8 +153,8 @@ export default function LoginPage() {
                         className="text-sm font-medium text-indigo-400 hover:text-indigo-300 transition-colors"
                     >
                         {isLogin
-                            ? "Don't have an account? Sign up"
-                            : "Already have an account? Sign in"}
+                            ? "¿No tienes una cuenta? Regístrate"
+                            : "¿Ya tienes una cuenta? Inicia sesión"}
                     </button>
                 </div>
             </div>

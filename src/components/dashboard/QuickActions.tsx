@@ -147,7 +147,7 @@ export function QuickActions() {
                         className="flex flex-col items-center justify-center gap-2 rounded-xl border border-slate-800 bg-slate-800/30 p-4 transition-all hover:border-slate-700 hover:bg-slate-800/50"
                     >
                         <UserPlus className="h-5 w-5 text-emerald-400" />
-                        <span className="text-xs font-medium text-slate-300">Nuevo Lead</span>
+                        <span className="text-xs font-medium text-slate-300">Nuevo Prospecto</span>
                     </button>
                     <button
                         type="button"

@@ -6,14 +6,14 @@ import { LayoutDashboard, KanbanSquare, MessageSquareText, Settings, BarChart3, 
 import { cn } from "@/lib/utils";
 
 const navigation = [
-    { name: "Dashboard", href: "/", icon: LayoutDashboard },
+    { name: "Panel", href: "/", icon: LayoutDashboard },
     { name: "Pipeline", href: "/pipeline", icon: KanbanSquare },
     { name: "Calendario", href: "/calendar", icon: CalendarDays },
     { name: "Agencia", href: "/agency", icon: Users },
-    { name: "Analytics", href: "/analytics", icon: BarChart3 },
+    { name: "Analíticas", href: "/analytics", icon: BarChart3 },
     { name: "Scripts", href: "/scripts", icon: MessageSquareText },
     { name: "Archivo", href: "/archive", icon: Archive },
-    { name: "Settings", href: "/settings", icon: Settings },
+    { name: "Configuración", href: "/settings", icon: Settings },
 ];
 
 import { useApp } from "@/context/AppContext";

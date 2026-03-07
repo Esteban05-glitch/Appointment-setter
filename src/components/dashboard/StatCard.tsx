@@ -33,7 +33,7 @@ export function StatCard({ label, value, trend, trendUp, icon: Icon, color = "in
                     <span className={cn("font-medium", trendUp ? "text-emerald-400" : "text-red-400")}>
                         {trend}
                     </span>
-                    <span className="ml-2 text-slate-500">vs last month</span>
+                    <span className="ml-2 text-slate-500">vs el mes pasado</span>
                 </div>
             )}
         </div>

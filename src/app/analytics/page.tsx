@@ -22,7 +22,7 @@ export default function AnalyticsPage() {
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
                     <h2 className="text-3xl font-bold tracking-tight text-white">
-                        {agency ? `Analytics: ${agency.name}` : "Performance Analytics"}
+                        {agency ? `Analíticas: ${agency.name}` : "Analíticas de Rendimiento"}
                     </h2>
                     <p className="mt-2 text-slate-400">
                         {viewMode === 'agency' ? "Métricas agregadas de todo tu equipo." : "Tus métricas personales de conversión."}
@@ -61,7 +61,7 @@ export default function AnalyticsPage() {
                             <TrendingUp className="h-5 w-5" />
                         </div>
                         <div>
-                            <p className="text-sm font-medium text-slate-500">{agency ? "Agencia Conversion" : "Global conversion"}</p>
+                            <p className="text-sm font-medium text-slate-500">{agency ? "Conversión de Agencia" : "Conversión Global"}</p>
                             <p className="text-2xl font-bold text-white">{conversionRate}%</p>
                         </div>
                     </div>
@@ -72,7 +72,7 @@ export default function AnalyticsPage() {
                             <Target className="h-5 w-5" />
                         </div>
                         <div>
-                            <p className="text-sm font-medium text-slate-500">Monthly Revenue Goal</p>
+                            <p className="text-sm font-medium text-slate-500">Meta de Ingresos Mensual</p>
                             <p className="text-2xl font-bold text-white">${goals.monthlyCommission.toLocaleString()}</p>
                         </div>
                     </div>
@@ -83,7 +83,7 @@ export default function AnalyticsPage() {
                             <TrendingUp className="h-5 w-5" />
                         </div>
                         <div>
-                            <p className="text-sm font-medium text-slate-500">Monthly Calls (Mine)</p>
+                            <p className="text-sm font-medium text-slate-500">Llamadas Mensuales (Mías)</p>
                             <p className="text-2xl font-bold text-white">{totalCalls} / {goals.monthlyCalls}</p>
                         </div>
                     </div>
@@ -94,7 +94,7 @@ export default function AnalyticsPage() {
                             <Share2 className="h-5 w-5" />
                         </div>
                         <div>
-                            <p className="text-sm font-medium text-slate-500">Total Leads</p>
+                            <p className="text-sm font-medium text-slate-500">Prospectos Totales</p>
                             <p className="text-2xl font-bold text-white">{totalLeads}</p>
                         </div>
                     </div>
@@ -104,7 +104,7 @@ export default function AnalyticsPage() {
             <div className="grid gap-6 lg:grid-cols-2">
                 <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-6">
                     <div className="mb-6 flex items-center justify-between">
-                        <h3 className="text-lg font-bold text-white">Funnel Distribution</h3>
+                        <h3 className="text-lg font-bold text-white">Distribución del Embudo</h3>
                         <BarChart3 className="h-4 w-4 text-slate-500" />
                     </div>
                     <ConversionRateChart prospects={displayProspects} />
@@ -112,7 +112,7 @@ export default function AnalyticsPage() {
 
                 <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-6">
                     <div className="mb-6 flex items-center justify-between">
-                        <h3 className="text-lg font-bold text-white">Platform ROI</h3>
+                        <h3 className="text-lg font-bold text-white">ROI por Plataforma</h3>
                         <Share2 className="h-4 w-4 text-slate-500" />
                     </div>
                     <PlatformPerformanceChart prospects={displayProspects} />
@@ -130,7 +130,7 @@ export default function AnalyticsPage() {
 
                 <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-6 lg:col-span-2">
                     <div className="mb-6 flex items-center justify-between">
-                        <h3 className="text-lg font-bold text-white">Personal Goals Progress</h3>
+                        <h3 className="text-lg font-bold text-white">Progreso de Metas Personales</h3>
                         <Target className="h-4 w-4 text-slate-500" />
                     </div>
                     <GoalProgressChart prospects={personalProspects} goals={goals} totalCalls={totalCalls} />
