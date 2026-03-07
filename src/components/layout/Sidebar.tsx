@@ -6,7 +6,7 @@ import { LayoutDashboard, KanbanSquare, MessageSquareText, Settings, BarChart3, 
 import { cn } from "@/lib/utils";
 
 const navigation = [
-    { name: "Panel", href: "/", icon: LayoutDashboard },
+    { name: "Panel", href: "/dashboard", icon: LayoutDashboard },
     { name: "Pipeline", href: "/pipeline", icon: KanbanSquare },
     { name: "Calendario", href: "/calendar", icon: CalendarDays },
     { name: "Agencia", href: "/agency", icon: Users },

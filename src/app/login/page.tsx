@@ -43,7 +43,7 @@ export default function LoginPage() {
 
                 if (data.session) {
                     // Si el email de confirmación está desactivado, entramos directo
-                    router.push("/");
+                    router.push("/dashboard");
                     router.refresh();
                 } else {
                     alert("¡Cuenta creada con éxito! Supabase aún requiere verificación por email.\n\nPor favor, revisa la sección 'Settings' (no Providers) en Supabase para desactivar 'Confirm email'.");
@@ -52,7 +52,7 @@ export default function LoginPage() {
 
             // Si es login exitoso, redirigimos (esto ya estaba para isLogin=true)
             if (isLogin) {
-                router.push("/");
+                router.push("/dashboard");
                 router.refresh();
             }
         } catch (err: any) {

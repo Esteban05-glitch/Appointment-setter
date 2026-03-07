@@ -59,6 +59,7 @@ export async function middleware(request: NextRequest) {
 
         // Protect routes: Redirect to /login if there is no user and trying to access sensitive pages
         if (!user &&
+            request.nextUrl.pathname !== '/' &&
             !request.nextUrl.pathname.startsWith('/login') &&
             !request.nextUrl.pathname.startsWith('/auth')) {
             return NextResponse.redirect(new URL('/login', request.url))
@@ -66,7 +67,7 @@ export async function middleware(request: NextRequest) {
 
         // Redirect to / if user is logged in and trying to access /login
         if (user && request.nextUrl.pathname.startsWith('/login')) {
-            return NextResponse.redirect(new URL('/', request.url))
+            return NextResponse.redirect(new URL('/dashboard', request.url))
         }
     } catch (e) {
         console.error('Middleware Supabase error:', e)
