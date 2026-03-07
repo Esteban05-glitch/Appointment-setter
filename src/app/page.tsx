@@ -84,28 +84,46 @@ export default function LandingPage() {
                     </Link>
                 </div>
 
-                {/* Dashboard Preview Mockup */}
-                <div className="mt-20 w-full max-w-5xl px-4 lg:px-0">
-                    <div className="relative rounded-2xl border border-white/10 bg-slate-900/50 p-4 backdrop-blur shadow-2xl overflow-hidden group">
-                        <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500/10 to-transparent pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                        <div className="flex items-center gap-2 border-b border-white/5 pb-4 mb-4">
-                            <div className="flex gap-1.5">
-                                <div className="h-3 w-3 rounded-full bg-red-500/50"></div>
-                                <div className="h-3 w-3 rounded-full bg-yellow-500/50"></div>
-                                <div className="h-3 w-3 rounded-full bg-green-500/50"></div>
-                            </div>
-                            <div className="mx-auto h-4 w-64 rounded-full bg-white/5"></div>
-                        </div>
-                        <div className="grid grid-cols-3 gap-4">
-                            <div className="col-span-2 space-y-4">
-                                <div className="h-40 rounded-xl bg-white/5 animate-pulse"></div>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="h-24 rounded-xl bg-white/5 animate-pulse"></div>
-                                    <div className="h-24 rounded-xl bg-white/5 animate-pulse" style={{ animationDelay: '200ms' }}></div>
+                {/* Interface Showcase */}
+                <div className="mt-20 w-full max-w-6xl px-4 lg:px-0">
+                    <div className="relative group">
+                        {/* Shadow and Glow backgrounds */}
+                        <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-[2rem] blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
+
+                        <div className="relative rounded-[2rem] border border-white/10 bg-slate-900/50 p-2 backdrop-blur-3xl shadow-2xl overflow-hidden">
+                            <div className="grid grid-cols-12 gap-2">
+                                {/* Main Dashboard Image */}
+                                <div className="col-span-12 lg:col-span-8 overflow-hidden rounded-2xl border border-white/5">
+                                    <img
+                                        src="/screenshots/dashboard.png"
+                                        alt="Dashboard"
+                                        className="w-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
+                                    />
+                                </div>
+
+                                {/* Secondary Images Stack */}
+                                <div className="hidden lg:flex lg:col-span-4 flex-col gap-2">
+                                    <div className="flex-1 overflow-hidden rounded-2xl border border-white/5">
+                                        <img
+                                            src="/screenshots/pipeline.png"
+                                            alt="Pipeline"
+                                            className="h-full w-full object-cover"
+                                        />
+                                    </div>
+                                    <div className="flex-1 overflow-hidden rounded-2xl border border-white/5">
+                                        <img
+                                            src="/screenshots/analytics.png"
+                                            alt="Analytics"
+                                            className="h-full w-full object-cover"
+                                        />
+                                    </div>
                                 </div>
                             </div>
-                            <div className="space-y-4">
-                                <div className="h-full rounded-xl bg-white/5 animate-pulse" style={{ animationDelay: '400ms' }}></div>
+
+                            {/* Overlaying Info or Label */}
+                            <div className="absolute bottom-6 right-6 flex items-center gap-2 rounded-full bg-slate-900/80 backdrop-blur-md border border-white/10 px-4 py-2 text-xs font-semibold text-white">
+                                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                Live Dashboard Preview
                             </div>
                         </div>
                     </div>
