@@ -25,6 +25,12 @@ export default function AnalyticsPage() {
     const bookedLeads = displayProspects.filter(p => p.status === "booked").length;
     const conversionRate = totalLeads > 0 ? ((bookedLeads / totalLeads) * 100).toFixed(1) : "0";
 
+    const earnedCommissions = useMemo(() => {
+        return displayProspects
+            .filter(p => p.status === "closed")
+            .reduce((sum, p) => sum + ((p.value || 0) * (p.commissionRate || 10) / 100), 0);
+    }, [displayProspects]);
+
     return (
         <div className="space-y-8 pb-12">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
@@ -107,7 +113,7 @@ export default function AnalyticsPage() {
                         </div>
                         <div>
                             <p className="text-sm font-medium text-slate-500">Meta de Ingresos Mensual</p>
-                            <p className="text-2xl font-bold text-white">${goals.monthlyCommission.toLocaleString()}</p>
+                            <p className="text-2xl font-bold text-white">${earnedCommissions.toLocaleString()} / ${goals.monthlyCommission.toLocaleString()}</p>
                         </div>
                     </div>
                 </div>
