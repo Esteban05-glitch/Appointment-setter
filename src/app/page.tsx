@@ -54,10 +54,7 @@ export default function LandingPage() {
                 {/* Background Glow */}
                 <div className="absolute top-1/2 left-1/2 -z-10 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-indigo-500/10 blur-[120px]"></div>
 
-                <div className="inline-flex items-center gap-2 rounded-full border border-indigo-500/20 bg-indigo-500/10 px-4 py-1.5 text-xs font-semibold text-indigo-400 mb-8">
-                    <Shield className="h-3 w-3" />
-                    El CRM #1 para Appointment Setters de High-Ticket
-                </div>
+
 
                 <h1 className="max-w-4xl text-5xl font-extrabold tracking-tight text-white sm:text-7xl lg:text-8xl">
                     Domina tu Pipeline con <br />
