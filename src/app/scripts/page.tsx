@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Copy, Check, MessageSquare, Globe, Send, Sparkles, User, Bot, Loader2 } from "lucide-react";
+import ReactMarkdown from "react-markdown";
 import { cn } from "@/lib/utils";
 
 type Language = "en" | "es";
@@ -215,7 +216,13 @@ export default function ScriptsPage() {
                                             </button>
                                         </div>
                                     )}
-                                    {msg.content}
+                                    {msg.role === "assistant" ? (
+                                        <div className="prose prose-invert prose-sm max-w-none prose-p:leading-relaxed prose-pre:bg-slate-900 prose-li:marker:text-indigo-400">
+                                            <ReactMarkdown>{msg.content}</ReactMarkdown>
+                                        </div>
+                                    ) : (
+                                        msg.content
+                                    )}
                                 </div>
                                 <span className="text-[10px] text-slate-500 mt-1 px-1">
                                     {msg.role === "user" ? "Tú" : "Asistente AI"}
